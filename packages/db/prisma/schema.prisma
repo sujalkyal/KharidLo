@@ -31,7 +31,7 @@ model Admin {
 model Product {
   id          String  @id @default(uuid())
   name        String
-  image       String
+  image       String[]
   description String
   price       Float
   stock       Int
