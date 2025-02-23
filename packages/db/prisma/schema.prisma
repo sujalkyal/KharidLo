@@ -56,5 +56,15 @@ model Orders {
   user       User     @relation(fields: [userId], references: [id])
   status     String   @default("pending")
   products   Json
+  name       String
+  address    String
+  phone      String
+  amount      Float
+  paymentMode PaymentMode
   createdAt  DateTime @default(now())
+}
+
+enum PaymentMode {
+  COD
+  Razorpay
 }
