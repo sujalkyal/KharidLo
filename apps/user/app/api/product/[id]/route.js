@@ -1,23 +1,22 @@
-// returns user profile details
-
+// returns particular product details
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
 
 export async function GET(req, { params }) {
     try{
         const { id } = params;
-        const user = await prisma.user.findFirst({
+        const product = await prisma.product.findFirst({
             where: {
                 id,
             },
         });
     
-        if (!user) {
-            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        if (!product) {
+            return NextResponse.json({ message: "Product not found" }, { status: 404 });
         }
-
-        return NextResponse.json(user);
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
+
+    return NextResponse.json(product);
 }

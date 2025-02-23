@@ -1,5 +1,4 @@
-// returns user profile details
-
+// returns all cart details of a user
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
 
@@ -16,7 +15,11 @@ export async function GET(req, { params }) {
             return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
-        return NextResponse.json(user);
+        const cartDetails = await prisma.product.findMany({
+            where: { id: { in: user.cart } },
+        });
+
+        return NextResponse.json(cartDetails);
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }

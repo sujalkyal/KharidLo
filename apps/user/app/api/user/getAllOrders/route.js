@@ -1,4 +1,5 @@
-// returns user profile details
+// route to get all orders of a user
+//not crrected
 
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
@@ -6,18 +7,18 @@ import prisma from "@repo/db/client";
 export async function GET(req, { params }) {
     try{
         const { id } = params;
-        const user = await prisma.user.findFirst({
+        const orders = await prisma.order.findMany({
             where: {
-                id,
+                userId: id,
             },
         });
     
-        if (!user) {
-            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        if (!orders) {
+            return NextResponse.json({ message: "Orders not found" }, { status: 404 });
         }
-
-        return NextResponse.json(user);
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
+
+    return NextResponse.json(orders);
 }
