@@ -2,10 +2,19 @@
 
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../lib/auth";
 
-export async function GET(req, { params }) {
+export async function GET(req) {
+    
     try{
-        const { id } = params;
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+        }
+
+        const id = session.user.id;
         const user = await prisma.user.findFirst({
             where: {
                 id,

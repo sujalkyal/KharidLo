@@ -18,7 +18,7 @@ model User {
   email    String  @unique
   password String
   orders   Orders[]
-  cart     String[]
+  cart     Json[]    // {productId: , quantity:}
   reviews  Review[]
 }
 
@@ -55,7 +55,7 @@ model Orders {
   userId     String
   user       User     @relation(fields: [userId], references: [id])
   status     String   @default("pending")
-  products   Json
+  products   Json[]       // {productId: , quantity:}
   name       String
   address    String
   phone      String
