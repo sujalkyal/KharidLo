@@ -40,6 +40,21 @@ export async function POST(req) {
         } else {
             // Add new product
             cart.push({ productId, quantity: 1 });
+            //remove from wishlist when added to cart
+            const user = await prisma.user.findUnique({
+                where: { id: id },
+                select: { wishlist: true }
+            });
+        
+            if (user && user.wishlist) {
+                const updatedWishlist = user.wishlist.filter(item => item.productId !== productId);
+        
+                // Update the user's wishlist in the database
+                await prisma.user.update({
+                    where: { id: id },
+                    data: { wishlist: updatedWishlist }
+                });
+            }
         }
 
         // Update the user's cart in the database

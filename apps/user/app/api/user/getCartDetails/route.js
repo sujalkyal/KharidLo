@@ -27,6 +27,8 @@ export async function GET(req) {
         }
 
         let result = [];
+        const platformFee = 20;
+        let totalAmount = 0 ;
 
         // iterate over the cart items and get the product details
         for (let i = 0; i < user.cart.length; i++) {
@@ -39,9 +41,12 @@ export async function GET(req) {
                 ...user.cart[i],
                 product: product
             });
+            totalAmount += (product.price*user.cart[i].quantity)
         }
 
-        return NextResponse.json(result);
+        totalAmount+=platformFee;
+
+        return NextResponse.json({result,totalAmount});
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
