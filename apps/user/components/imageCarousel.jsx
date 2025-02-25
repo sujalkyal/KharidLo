@@ -38,7 +38,7 @@ export default function Carousel() {
       <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
         {slides.map((slide, index) => (
           <div key={index} className="w-full flex-shrink-0 relative text-white bg-black">
-            <Image src={slide.image} alt={slide.title} width={1200} height={500} className="w-full object-cover" />
+            <Image src={slide.image} alt={slide.title} width={1200} height={300} className="w-full object-cover" />
             <div className="absolute top-1/4 left-10">
               <h2 className="text-lg font-semibold">{slide.title}</h2>
               <p className="text-4xl font-bold mt-2">{slide.subtitle}</p>
