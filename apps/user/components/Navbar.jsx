@@ -5,8 +5,10 @@ import { FiSearch, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
+  const { data: session } = useSession();
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [hasMounted, setHasMounted] = useState(false);
@@ -17,7 +19,7 @@ const Navbar = () => {
 
     async function fetchCartDetails() {
       try {
-        const response = await axios.get("http://localhost:3000/api/user/getCartDetails");
+        const response = await axios.get("/api/user/getCartDetails");
         if (response.status === 200 && response.data.result) {
           const cartItems = response.data.result;
           const count = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -33,7 +35,7 @@ const Navbar = () => {
 
     async function fetchWishlistDetails() {
       try {
-        const response = await axios.get("http://localhost:3000/api/user/wishlist/getAllItems");
+        const response = await axios.get("/api/user/wishlist/getAllItems");
         if (response.status === 200 && Array.isArray(response.data)) {
           setWishlistCount(response.data.length);
         } else {
@@ -44,7 +46,6 @@ const Navbar = () => {
         setWishlistCount(0);
       }
     }
-    
 
     fetchCartDetails();
     fetchWishlistDetails();
@@ -61,31 +62,58 @@ const Navbar = () => {
           <li>
             <Link
               href="/"
-              className={`cursor-pointer font-medium ${pathname === "/" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"}`}
+              className={`cursor-pointer font-medium ${
+                pathname === "/" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+              }`}
             >
               Home
             </Link>
           </li>
           <li>
-            <Link href="/contact" className={`cursor-pointer ${pathname === "/contact" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"}`}>
+            <Link
+              href="/contact"
+              className={`cursor-pointer ${
+                pathname === "/contact" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+              }`}
+            >
               Contact
             </Link>
           </li>
           <li>
-            <Link href="/about" className={`cursor-pointer ${pathname === "/about" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"}`}>
+            <Link
+              href="/about"
+              className={`cursor-pointer ${
+                pathname === "/about" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+              }`}
+            >
               About
             </Link>
           </li>
           <li>
-            <Link href="/signup" className={`cursor-pointer ${pathname === "/signup" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"}`}>
-              Sign Up
-            </Link>
+            {session ? (
+              <button onClick={() => signOut()} className="text-gray-600 hover:text-black">
+                Log Out
+              </button>
+            ) : (
+              <Link
+                href="/api/auth/signin"
+                className={`cursor-pointer ${
+                  pathname === "/signup" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+                }`}
+              >
+                Sign Up
+              </Link>
+            )}
           </li>
         </ul>
 
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <input type="text" placeholder="Search" className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300" />
+            <input
+              type="text"
+              placeholder="Search"
+              className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300"
+            />
             <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
           </div>
 

@@ -25,7 +25,7 @@ export async function GET() {
             return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
-        if (!user.wishlist || user.wishlist.length === 0) {
+        if (!user.wishlist) {
             return NextResponse.json({ message: "Wishlist is empty" }, { status: 404 });
         }
 

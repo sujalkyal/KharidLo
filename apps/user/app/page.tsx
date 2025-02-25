@@ -1,4 +1,5 @@
 "use client"
+
 import { useState } from "react";
 import Image from "next/image";
 import Carousel from "../components/imageCarousel";
@@ -40,6 +41,7 @@ const categories = [
 
 export default function Header() {
   const [bestSellingProducts, setBestSellingProducts] = useState<{ id: string; name: string; price: number; image: string[] }[]>([]);
+  const [allProducts, setAllProducts] = useState<{ id: string; name: string; price: number; image: string[] }[]>([]);
 
 
   useEffect(() => {
@@ -51,6 +53,18 @@ export default function Header() {
         console.error("Error fetching best selling products:", error);
       });
   }, []);
+
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/api/product/getAllProducts")
+      .then(response => {
+        setAllProducts(response.data); // Directly setting the array
+      })
+      .catch(error => {
+        console.error("Error fetching best selling products:", error);
+      });
+  }, []);
+  
 
 
   return (
@@ -78,6 +92,18 @@ export default function Header() {
       </div>
       <div className="grid grid-cols-5 gap-2">
         {bestSellingProducts.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
+
+    <section className="w-full p-6 bg-white">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">All Products</h2>
+        <button className="bg-red-500 text-white px-8 py-2 rounded">View All</button>
+      </div>
+      <div className="grid grid-cols-5 gap-2">
+        {allProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

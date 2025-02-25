@@ -17,7 +17,7 @@ export async function GET(req) {
             select: { cart: true }
         });
 
-        if (!user || !user.cart || user.cart.length === 0) {
+        if (!user || !user.cart) {
             return NextResponse.json({ message: "Cart is empty" }, { status: 404 });
         }
 
