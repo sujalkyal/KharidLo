@@ -7,12 +7,12 @@ import { authOptions } from "../../../lib/auth";
 
 export async function GET(req) {
     try{
-        const session = await getServerSession(authOptions);
-        if(!session) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        }
-        const id = session.user.id;
-        // const id = "47863ed0-d079-4750-9747-f7fc4b0dae93";
+        // const session = await getServerSession(authOptions);
+        // if(!session) {
+        //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        // }
+        // const id = session.user.id;
+        const id = "47863ed0-d079-4750-9747-f7fc4b0dae93";
         const user = await prisma.user.findFirst({
             where: {
                 id: id,
