@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import axios from "axios";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
-  const userDetailsRef = useRef({
+  const [userDetails, setUserDetails] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -17,13 +17,12 @@ export default function ProfilePage() {
   });
 
   const handleInputChange = (field) => (e) => {
-    userDetailsRef.current[field] = e.target.value;
+    setUserDetails((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const saveFunction = async (e) => {
-    e.preventDefault();
-    const { currentPassword, newPassword, confirmPassword, ...userDetails } = userDetailsRef.current;
-    
+  const saveFunction = async () => {
+    const { currentPassword, newPassword, confirmPassword, ...otherDetails } = userDetails;
+
     if (newPassword && newPassword !== confirmPassword) {
       toast.error("New Password and Confirm Password do not match");
       return;
@@ -36,9 +35,9 @@ export default function ProfilePage() {
         return;
       }
 
-      const updatedDetails = newPassword ? { ...userDetails, newPassword } : userDetails;
+      const updatedDetails = newPassword ? { ...otherDetails, newPassword } : otherDetails;
+      const response = await axios.post("http://localhost:3000/api/user/updateDetails", updatedDetails);
       
-      const response = await axios.post("http://localhost:3000/api/user/updateDetails", userDetails);
       if (response.data.success) {
         toast.success("Changes Saved");
       } else {
@@ -50,7 +49,15 @@ export default function ProfilePage() {
   };
 
   const cancelFunction = () => {
-    Object.keys(userDetailsRef.current).forEach(key => userDetailsRef.current[key] = "");
+    setUserDetails({
+      firstName: "",
+      lastName: "",
+      email: "",
+      address: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    });
     toast.success("Form cleared");
   };
 
@@ -75,22 +82,22 @@ export default function ProfilePage() {
             </div>
             <div className="w-3/4 pl-6">
               <h3 className="text-lg font-semibold text-red-500 mb-4">Edit Your Profile</h3>
-              <form className="space-y-4">
+              <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" className="w-full p-2 border rounded" placeholder="First Name" onChange={handleInputChange("firstName")} />
-                  <input type="text" className="w-full p-2 border rounded" placeholder="Last Name" onChange={handleInputChange("lastName")} />
+                  <input type="text" className="w-full p-2 border rounded" placeholder="First Name" value={userDetails.firstName} onChange={handleInputChange("firstName")} />
+                  <input type="text" className="w-full p-2 border rounded" placeholder="Last Name" value={userDetails.lastName} onChange={handleInputChange("lastName")} />
                 </div>
-                <input type="email" className="w-full p-2 border rounded" placeholder="example@gmail.com" onChange={handleInputChange("email")} />
-                <input type="text" className="w-full p-2 border rounded" placeholder="Address" onChange={handleInputChange("address")} />
+                <input type="email" className="w-full p-2 border rounded" placeholder="example@gmail.com" value={userDetails.email} onChange={handleInputChange("email")} />
+                <input type="text" className="w-full p-2 border rounded" placeholder="Address" value={userDetails.address} onChange={handleInputChange("address")} />
                 <h4 className="text-md font-semibold mt-6">Password Changes</h4>
-                <input type="password" className="w-full p-2 border rounded" placeholder="Current Password" onChange={handleInputChange("currentPassword")} />
-                <input type="password" className="w-full p-2 border rounded" placeholder="New Password" onChange={handleInputChange("newPassword")} />
-                <input type="password" className="w-full p-2 border rounded" placeholder="Confirm New Password" onChange={handleInputChange("confirmPassword")} />
+                <input type="password" className="w-full p-2 border rounded" placeholder="Current Password" value={userDetails.currentPassword} onChange={handleInputChange("currentPassword")} />
+                <input type="password" className="w-full p-2 border rounded" placeholder="New Password" value={userDetails.newPassword} onChange={handleInputChange("newPassword")} />
+                <input type="password" className="w-full p-2 border rounded" placeholder="Confirm New Password" value={userDetails.confirmPassword} onChange={handleInputChange("confirmPassword")} />
                 <div className="flex justify-between mt-4">
                   <button type="button" className="text-gray-600" onClick={cancelFunction}>Cancel</button>
-                  <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded" onClick={saveFunction}>Save Changes</button>
+                  <button type="button" className="bg-red-500 text-white px-4 py-2 rounded" onClick={saveFunction}>Save Changes</button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
