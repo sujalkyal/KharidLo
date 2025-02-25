@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CartItem from "../../../components/CartItem";
+import CartItem from "../components/CartItem";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
