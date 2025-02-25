@@ -1,52 +1,48 @@
-// returns all cart details of a user
-
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 
 export async function GET(req) {
-    try{
-        // const session = await getServerSession(authOptions);
-        // if(!session) {
-        //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        // }
-        // const id = session.user.id;
-        const id = "47863ed0-d079-4750-9747-f7fc4b0dae93";
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+        const id = session.user.id;
+        // const id = "47863ed0-d079-4750-9747-f7fc4b0dae93";
+
         const user = await prisma.user.findFirst({
-            where: {
-                id: id,
-            },
-            select: {
-                cart: true
-            }
+            where: { id },
+            select: { cart: true }
         });
-    
-        if (!user.cart) {
-            return NextResponse.json({ message: "Cart details not found" }, { status: 404 });
+
+        if (!user || !user.cart || user.cart.length === 0) {
+            return NextResponse.json({ message: "Cart is empty" }, { status: 404 });
         }
 
         let result = [];
         const platformFee = 20;
-        let totalAmount = 0 ;
+        let totalAmount = 0;
 
-        // iterate over the cart items and get the product details
-        for (let i = 0; i < user.cart.length; i++) {
+        for (let item of user.cart) {
             const product = await prisma.product.findFirst({
-                where: {
-                    id: user.cart[i].productId
-                }
+                where: { id: item.productId }
             });
-            result.push({
-                ...user.cart[i],
-                product: product
-            });
-            totalAmount += (product.price*user.cart[i].quantity)
+
+            if (product) {
+                result.push({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    product,
+                });
+                totalAmount += product.price * item.quantity;
+            }
         }
 
-        totalAmount+=platformFee;
+        totalAmount += platformFee;
 
-        return NextResponse.json({result,totalAmount});
+        return NextResponse.json({ result, totalAmount });
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
