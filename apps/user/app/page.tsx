@@ -6,7 +6,6 @@ import ProductCard from "../components/ProductCard";
 import axios from "axios";
 import { useEffect } from "react";
 
-
 const slides = [
   {
     image: "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
