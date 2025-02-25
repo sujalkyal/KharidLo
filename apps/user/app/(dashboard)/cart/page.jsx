@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CartItem from "../components/CartItem";
+import CartItem from "../../../components/CartItem";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
@@ -12,25 +12,20 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get("/api/user/cart/getAllItems");
-        setCart(response.data);
+        const response = await axios.get("/api/user/getCartDetails");
+        setCart(response.data.result);  // ✅ Correctly extracting cart items
+        setSubtotal(response.data.totalAmount);  // ✅ Using API totalAmount
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
     };
     fetchCart();
-  }, []);
-
-  useEffect(() => {
-    // Calculate subtotal when cart changes
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    setSubtotal(total);
   }, [cart]);
 
   const handleRemove = async (productId) => {
     try {
-      await axios.delete(`/api/user/cart/removeItem/${productId}`);
-      setCart(cart.filter((item) => item.id !== productId));
+      await axios.delete(`http://localhost:3000/api/user/deleteitemcart/${productId}`);
+      setCart(cart.filter((item) => item.product.id !== productId)); // ✅ Fixing remove filter
     } catch (error) {
       console.error("Error removing item:", error);
     }
@@ -41,8 +36,8 @@ const CartPage = () => {
       <h2 className="text-2xl font-bold mb-6">Shopping Cart</h2>
       <div className="grid gap-4">
         {cart.length > 0 ? (
-          cart.map((product) => (
-            <CartItem key={product.id} product={product} onRemove={handleRemove} />
+          cart.map(({ product, quantity }) => (
+            <CartItem key={product.id} product={product} quantity={quantity} onRemove={handleRemove} />
           ))
         ) : (
           <p className="text-gray-500">Your cart is empty.</p>
