@@ -25,9 +25,6 @@ const ProductCard = () => {
           <button className="p-2 bg-white rounded-full shadow-md">
             <Heart className="w-5 h-5" />
           </button>
-          <button className="p-2 bg-white rounded-full shadow-md">
-            <Eye className="w-5 h-5" />
-          </button>
         </div>
       </div>
       <h3 className="mt-4 text-lg font-semibold">The north coat</h3>
