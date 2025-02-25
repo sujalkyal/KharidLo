@@ -3,12 +3,6 @@ import { FiSearch, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 const Navbar = () => {
   return (
     <header className="w-full border-b">
-      {/* Top Banner */}
-      <div className="bg-black text-white text-center text-sm py-2">
-        Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{' '}
-        <span className="font-bold cursor-pointer">ShopNow</span>
-      </div>
-      
       {/* Navbar */}
       <nav className="flex justify-between items-center py-4 px-8 bg-white shadow-md">
         {/* Logo */}
@@ -27,7 +21,7 @@ const Navbar = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="What are you looking for?"
+              placeholder="Search"
               className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300"
             />
             <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
