@@ -9,6 +9,7 @@ import Carousel from "../components/imageCarousel";
 import ProductCard from "../components/ProductCard";
 import CategoryCard from "../components/CategoryCard";
 import CategorySection from "../components/CategorySection";
+import FeatureCard from "../components/FeatureCard";
 
 const categories = [
   "Electronics",
@@ -142,6 +143,8 @@ export default function Header() {
           ))}
         </div>
       </section>
+
+      <FeatureCard/>
 
       </div>
     </>
