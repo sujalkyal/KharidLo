@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { FiMonitor, FiShoppingBag, FiHome, FiActivity, FiGift, FiBox, FiHeart } from "react-icons/fi";
+import { FiMonitor, FiShoppingBag, FiHome, FiActivity, FiHeart } from "react-icons/fi";
 
 const categories = [
   { name: "Electronics", icon: <FiMonitor /> },
