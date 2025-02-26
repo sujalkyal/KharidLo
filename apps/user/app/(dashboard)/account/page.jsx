@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import axios from "axios";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfilePage() {
   const [userDetails, setUserDetails] = useState({
@@ -29,14 +30,14 @@ export default function ProfilePage() {
     }
 
     try {
-      const authResponse = await axios.post("http://localhost:3000/api/user/checkPassword", { currentPassword });
+      const authResponse = await axios.post("/api/user/checkPassword", { currentPassword });
       if (!authResponse.data.valid) {
         toast.error("Incorrect current password");
         return;
       }
 
       const updatedDetails = newPassword ? { ...otherDetails, newPassword } : otherDetails;
-      const response = await axios.post("http://localhost:3000/api/user/updateDetails", updatedDetails);
+      const response = await axios.post("/api/user/updateDetails", updatedDetails);
       
       if (response.data.success) {
         toast.success("Changes Saved");
@@ -63,6 +64,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ToastContainer /> {/* Add this line */}
       <main className="flex flex-grow justify-center py-10 bg-gray-100">
         <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Manage My Account</h2>
