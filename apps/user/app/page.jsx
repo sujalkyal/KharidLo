@@ -7,6 +7,8 @@ import axios from "axios";
 import Image from "next/image";
 import Carousel from "../components/imageCarousel";
 import ProductCard from "../components/ProductCard";
+import CategoryCard from "../components/CategoryCard";
+import CategorySection from "../components/CategorySection";
 
 const categories = [
   "Electronics",
@@ -17,6 +19,7 @@ const categories = [
   "Groceries & Pets",
   "Health & Beauty",
 ];
+
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -73,7 +76,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="flex w-full px-2 py-8 space-x-4">
+      <div className="flex w-full px-10 py-8 space-x-4">
         {/* Category Sidebar */}
         <aside className="w-1/5 p-4">
           <ul className="space-y-2">
@@ -91,6 +94,10 @@ export default function Header() {
         </div>
       </div>
 
+      <hr className="border-gray-300 my-4 w-[90%] mx-auto" />
+
+      <div className="px-10 py-6">
+
       <section className="w-full p-6 bg-white">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold">Best Selling Products</h2>
@@ -102,6 +109,9 @@ export default function Header() {
           ))}
         </div>
       </section>
+
+
+      <hr className="border-gray-300 my-4 w-[90%] mx-auto" />
 
       <section className="w-full p-6 bg-white">
         <div className="flex justify-between items-center mb-6">
@@ -120,6 +130,11 @@ export default function Header() {
         </div>
       </section>
 
+      <hr className="border-gray-300 my-6 w-[90%] mx-auto" />
+
+      <CategorySection />
+
+      <hr className="border-gray-300 my-6 w-[90%] mx-auto" />
 
       <section className="w-full p-6 bg-white">
         <div className="flex justify-between items-center mb-6">
@@ -132,6 +147,8 @@ export default function Header() {
           ))}
         </div>
       </section>
+
+      </div>
     </>
   );
 }
