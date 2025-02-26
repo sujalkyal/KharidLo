@@ -24,7 +24,10 @@ export async function DELETE(req) {
             return NextResponse.json({ message: "Cart is empty" }, { status: 404 });
         }
 
-        const updatedCart = user.cart.filter(item => item.productId !== productId);
+        // Ensure proper parsing of cart JSON array
+        let updatedCart = Array.isArray(user.cart) ? user.cart : JSON.parse(user.cart);
+
+        updatedCart = updatedCart.filter(item => item.productId !== productId);
 
         await prisma.user.update({
             where: { id: session.user.id },

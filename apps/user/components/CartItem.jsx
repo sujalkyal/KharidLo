@@ -2,7 +2,7 @@ import { X, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 
-const CartItem = ({ product, quantity, onRemove }) => {
+const CartItem = ({ product, quantity, onRemove, onQuantityChange }) => {
   const [itemQuantity, setItemQuantity] = useState(quantity);
 
   const handleUpdateQuantity = async (increase) => {
@@ -10,14 +10,24 @@ const CartItem = ({ product, quantity, onRemove }) => {
       const updatedQuantity = increase ? itemQuantity + 1 : itemQuantity - 1;
       if (updatedQuantity < 1) return; // Prevent quantity from going below 1
 
-      await axios.post("http://localhost:3000/api/user/addToCart", {
+      await axios.post("/api/user/addToCart", {
         productId: product.id,
         choice: increase, // true for add, false for subtract
       });
 
       setItemQuantity(updatedQuantity);
+      onQuantityChange(); // ✅ Trigger re-fetch of cart details after update
     } catch (error) {
       console.error("Error updating quantity:", error);
+    }
+  };
+
+  const handleRemove = async () => {
+    try {
+      await axios.delete("/api/user/deleteitemcart", { data: { productId: product.id } }); // ✅ Corrected DELETE request
+      onQuantityChange(); // ✅ Refresh cart after item removal
+    } catch (error) {
+      console.error("Error removing item:", error);
     }
   };
 
@@ -32,17 +42,17 @@ const CartItem = ({ product, quantity, onRemove }) => {
           className="w-24 h-24 object-cover rounded-xl shadow-md border border-gray-300"
         />
         <button
-          onClick={() => onRemove(product.id)}
-          className="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md transition-all duration-300"
+          onClick={handleRemove}
+          className="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md transition-all duration-300 cursor-pointer"
         >
           <X size={16} />
         </button>
       </div>
 
-      {/* Product Name (Aligned) */}
+      {/* Product Name */}
       <span className="text-lg font-semibold text-gray-800 col-span-2">{product.name}</span>
 
-      {/* Product Price (Aligned) */}
+      {/* Product Price */}
       <span className="text-lg font-semibold text-gray-800 tracking-wide col-span-1">
         ${product.price.toFixed(2)}
       </span>
@@ -51,7 +61,7 @@ const CartItem = ({ product, quantity, onRemove }) => {
       <div className="flex items-center space-x-3 col-span-1">
         <button
           onClick={() => handleUpdateQuantity(false)}
-          className="p-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg shadow-md transition-all duration-300 active:scale-90"
+          className="p-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg shadow-md transition-all duration-300 active:scale-90 cursor-pointer"
         >
           <Minus size={20} />
         </button>
@@ -60,19 +70,16 @@ const CartItem = ({ product, quantity, onRemove }) => {
         </span>
         <button
           onClick={() => handleUpdateQuantity(true)}
-          className="p-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg shadow-md transition-all duration-300 active:scale-90"
+          className="p-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg shadow-md transition-all duration-300 active:scale-90 cursor-pointer"
         >
           <Plus size={20} />
         </button>
       </div>
 
-      {/* Total Price (Aligned) */}
+      {/* Total Price */}
       <span className="text-lg font-semibold text-gray-900 tracking-wide col-span-1">
         ${(product.price * itemQuantity).toFixed(2)}
       </span>
-
-      {/* Floating Accent */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-white via-gray-100 to-gray-300 rounded-2xl opacity-60"></div>
     </div>
   );
 };
