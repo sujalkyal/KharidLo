@@ -67,7 +67,7 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/user/wishlist/getAllItems")
+    axios.get("http://localhost:3000/api/user/wishlist/getAllItems")
       .then(({ data }) => setWishlist(data.map(item => item.id) || []))
       .catch(error => console.error("Error fetching wishlist:", error));
   }, []);
@@ -117,7 +117,12 @@ export default function Header() {
       <section className="w-full p-6 bg-white">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold">All Products</h2>
-          <button className="bg-red-500 text-white px-8 py-2 rounded">View All</button>
+          <button
+            onClick={() => router.push("/allProducts")}
+            className="bg-red-500 text-white px-8 py-2 rounded"
+          >
+            View All
+          </button>
         </div>
         <div className="grid grid-cols-5 gap-2">
           {allProducts.map((product) => (
