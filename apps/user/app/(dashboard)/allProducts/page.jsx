@@ -25,20 +25,31 @@ export default function AllProductsPage() {
   }, []);
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">All Products</h2>
-      </div>
+    <div className="p-10  mx-auto">
+  {/* Header Section */}
+  <div className="flex justify-between items-center mb-8">
+    <h2 className="text-3xl font-bold">All Products</h2>
+  </div>
 
-      <div className="grid grid-cols-5 gap-6">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
-          ))
-        ) : (
-          <p className="text-gray-500">No products available.</p>
-        )}
-      </div>
-    </div>
+  {/* Divider */}
+  <div className="border-t border-gray-200 my-4"></div>
+
+  {/* Products Grid */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    {products.length > 0 ? (
+      products.map((product) => (
+        <ProductCard 
+          key={product.id} 
+          product={product} 
+          wishlist={wishlist} 
+          setWishlist={setWishlist} 
+        />
+      ))
+    ) : (
+      <p className="text-gray-500 col-span-full text-center">No products available.</p>
+    )}
+  </div>
+</div>
+
   );
 }
