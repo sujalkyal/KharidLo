@@ -21,13 +21,12 @@ const categories = [
 export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
-  const [bestSellingProducts, setBestSellingProducts] = useState<
-    { id: string; name: string; price: number; image: string[] }[]
-  >([]);
-  const [allProducts, setAllProducts] = useState<
-    { id: string; name: string; price: number; image: string[] }[]
-  >([]);
+
+  const [wishlist, setWishlist] = useState([]);
+  const [bestSellingProducts, setBestSellingProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [newlyAddedProducts, setNewlyAddedProducts] = useState([]);
+
 
   useEffect(() => {
     axios
@@ -47,9 +46,28 @@ export default function Header() {
         setAllProducts(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching best selling products:", error);
+        console.error("Error fetching all products:", error);
       });
   }, []);
+
+  //get 5 newly added products from the database
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/product/getNewlyAddedProducts")
+      .then((response) => {
+        setNewlyAddedProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching newly added products:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/user/wishlist/getAllItems")
+      .then(({ data }) => setWishlist(data.map(item => item.id) || []))
+      .catch(error => console.error("Error fetching wishlist:", error));
+  }, []);
+
 
   if (status === "loading") return null; // Avoid rendering while checking auth
 
@@ -80,7 +98,7 @@ export default function Header() {
         </div>
         <div className="grid grid-cols-5 gap-2">
           {bestSellingProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
           ))}
         </div>
       </section>
@@ -92,7 +110,20 @@ export default function Header() {
         </div>
         <div className="grid grid-cols-5 gap-2">
           {allProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
+          ))}
+        </div>
+      </section>
+
+
+      <section className="w-full p-6 bg-white">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold">Newly Added Products</h2>
+          <button className="bg-red-500 text-white px-8 py-2 rounded">View All</button>
+        </div>
+        <div className="grid grid-cols-5 gap-2">
+          {newlyAddedProducts.map((product) => (
+            <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
           ))}
         </div>
       </section>
