@@ -26,7 +26,7 @@ export async function POST(req) {
 
     const valid = await bcrypt.compare(currentPassword, user.password);
     if (!valid) {
-        return NextResponse.json({ message: "Incorrect password", valid: false }, { status: 401 });
+        return NextResponse.json({ message: "Incorrect password", valid: false }, { status: 200 });
     }
     
     return NextResponse.json({ message: "Password Matched Successfully" , valid: true}, { status: 200 });

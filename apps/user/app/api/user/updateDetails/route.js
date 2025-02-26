@@ -8,13 +8,13 @@ import { authOptions } from "../../../lib/auth";
 export async function POST(req) {
     const session = await getServerSession(authOptions);
     if (!session) {
-        return NextResponse.forbidden();
+        return NextResponse.json({ message: "Unauthorized", success: false }, { status: 401 });
     }
     const id = session.user.id;
     
     const { firstName, lastName, email, address, password } = await req.json();
     
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
         where: {
         id
         },
@@ -27,5 +27,8 @@ export async function POST(req) {
         },
     });
     
-    return NextResponse.json({ message: "User details updated" , success: true}, { status: 200 });
+    return NextResponse.json(
+        { message: "User details updated", success: true, updatedUser },
+        { status: 200 }
+    );
 }
