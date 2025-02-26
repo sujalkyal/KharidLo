@@ -1,18 +1,31 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, router } from "react";
 import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
-  const { data: session } = useSession();
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [hasMounted, setHasMounted] = useState(false);
   const pathname = usePathname(); // Get current route
+  const router = useRouter()
+  const { data: session, status } = useSession();
+  
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/api/auth/signin");
+    }
+  }, [status, router]); // Dependency on `status`
+
+  const handleLogOut = async () => {
+    await signOut();
+    router.push("/api/auth/signin");
+  }
 
   useEffect(() => {
     setHasMounted(true);
@@ -91,7 +104,7 @@ const Navbar = () => {
           </li>
           <li>
             {session ? (
-              <button onClick={() => signOut()} className="text-gray-600 hover:text-black">
+              <button onClick={() => handleLogOut()} className="text-gray-600 hover:text-black">
                 Log Out
               </button>
             ) : (
