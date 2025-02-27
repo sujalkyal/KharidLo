@@ -88,7 +88,7 @@ export default function Header() {
         <div className="w-[1px] bg-gray-300"></div>
 
         {/* Carousel Section */}
-        <div className="flex-grow">
+        <div className="flex-grow my-auto">
           <Carousel />
         </div>
       </div>

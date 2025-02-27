@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ProductCard from "../../../components/ProductCard.jsx";
 
-
 const SearchedPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";

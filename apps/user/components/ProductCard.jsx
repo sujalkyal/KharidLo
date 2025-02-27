@@ -6,16 +6,13 @@ import axios from "axios";
 export default function ProductCard({ product, wishlist = [], setWishlist }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log("Product data:", product);
-  console.log(product.name);
-  console.log(product.price);
+
   if (!product) return null;
 
   const productImage = product?.image?.length > 0 ? product.image[0] : "/placeholder.png";
   const reviews = product?.reviews || [];
   const averageRating = reviews.length
-    ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length
-    : 0;
+    ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length: 0;
 
   const isWishlisted = wishlist.includes(product.id);
 
@@ -44,8 +41,7 @@ export default function ProductCard({ product, wishlist = [], setWishlist }) {
       <div
         className="relative w-full overflow-hidden rounded-lg"
         onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
+        onMouseLeave={() => setHovered(false)}>
         <img src={productImage} alt={product?.name || "Product"} className="w-full h-64 object-cover" />
 
         {/* Add to Cart Button (Appears on Hover) */}
