@@ -3,32 +3,35 @@
 import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
-import { useEffect, useState, router } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession, getSession } from "next-auth/react";
+import { toast } from "react-toastify";
+
 
 const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [hasMounted, setHasMounted] = useState(false);
-  const pathname = usePathname(); // Get current route
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
   const { data: session, status } = useSession();
-  
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/api/auth/signin");
     }
-  }, [status, router]); // Dependency on `status`
+  }, [status, router]);
 
   const handleLogOut = async () => {
     await signOut();
     router.push("/api/auth/signin");
-  }
+  };
 
   useEffect(() => {
     setHasMounted(true);
+
+    if (!session) return;
 
     async function fetchCartDetails() {
       try {
@@ -62,7 +65,45 @@ const Navbar = () => {
 
     fetchCartDetails();
     fetchWishlistDetails();
-  }, []);
+  }, [session]);
+
+
+  const handleHomeClick = async () => {
+    const userSession = await getSession();
+    if (!userSession) {
+      toast.error("Please log in to access Home", { position: "top-center" });
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handleWishlistClick = async () => {
+    const userSession = await getSession();
+    if (!userSession) {
+      toast.error("Please log in to access Wishlist", { position: "top-center" });
+    } else {
+      router.push("/wishlist");
+    }
+  }
+
+  const handleCartClick = async () => {
+    const userSession = await getSession();
+    if (!userSession) {
+      toast.error("Please log in to access Cart", { position: "top-center" });
+    } else {
+      router.push("/cart");
+    }
+  }
+
+  const handleAccountClick = async () => {
+    const userSession = await getSession();
+    if (!userSession) {
+      toast.error("Please log in to access Account", { position: "top-center" });
+    } else {
+      router.push("/account");
+    }
+  }
+
 
   return (
     <header className="w-full border-b">
@@ -73,21 +114,15 @@ const Navbar = () => {
 
         <ul className="flex space-x-6 text-lg">
           <li>
-            <Link
-              href="/"
-              className={`cursor-pointer font-medium ${
-                pathname === "/" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-              }`}
-            >
+            <button onClick={handleHomeClick} className="cursor-pointer font-medium text-gray-600 hover:text-black">
               Home
-            </Link>
+            </button>
           </li>
           <li>
             <Link
               href="/contact"
-              className={`cursor-pointer ${
-                pathname === "/contact" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-              }`}
+              className={`cursor-pointer ${pathname === "/contact" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+                }`}
             >
               Contact
             </Link>
@@ -95,24 +130,21 @@ const Navbar = () => {
           <li>
             <Link
               href="/about"
-              className={`cursor-pointer ${
-                pathname === "/about" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-              }`}
+              className={`cursor-pointer ${pathname === "/about" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
+                }`}
             >
               About
             </Link>
           </li>
           <li>
             {session ? (
-              <button onClick={() => handleLogOut()} className="text-gray-600 hover:text-black">
+              <button onClick={handleLogOut} className="text-gray-600 hover:text-black">
                 Log Out
               </button>
             ) : (
               <Link
                 href="/api/auth/signin"
-                className={`cursor-pointer ${
-                  pathname === "/signup" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-                }`}
+                className="text-gray-600 hover:text-black"
               >
                 Sign Up
               </Link>
@@ -130,7 +162,7 @@ const Navbar = () => {
             <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
           </div>
 
-          <Link href="/wishlist">
+          <button onClick={handleWishlistClick}>
             <div className="relative">
               <FiHeart className="text-2xl cursor-pointer hover:text-gray-700" />
               {hasMounted && wishlistCount > 0 && (
@@ -139,9 +171,9 @@ const Navbar = () => {
                 </span>
               )}
             </div>
-          </Link>
+          </button>
 
-          <Link href="/cart">
+          <button onClick={handleCartClick}>
             <div className="relative">
               <FiShoppingCart className="text-2xl cursor-pointer hover:text-gray-700" />
               {hasMounted && cartCount > 0 && (
@@ -150,11 +182,11 @@ const Navbar = () => {
                 </span>
               )}
             </div>
-          </Link>
+          </button>
 
-          <Link href="/account">
+          <button onClick={handleAccountClick}>
             <FiUser className="text-2xl cursor-pointer hover:text-gray-700" />
-          </Link>
+          </button>
         </div>
       </nav>
     </header>
