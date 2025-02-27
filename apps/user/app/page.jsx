@@ -9,15 +9,16 @@ import ProductCard from "../components/ProductCard";
 import CategorySection from "../components/CategorySection";
 import FeatureCard from "../components/FeatureCard";
 
-const categories = [
-  "Electronics",
-  "Fashion",
-  "Home & Lifestyle",
-  "Sports & Outdoor",
-  "Baby's & Toys",
-  "Groceries & Pets",
-  "Health & Beauty",
-];
+const categories = {
+  "Electronics": "electronics",
+  "Fashion": "fashion",
+  "Home & Lifestyle": "home-lifestyle",
+  "Sports & Outdoor": "sports-outdoor",
+  "Baby's & Toys": "babys-toys",
+  "Groceries & Pets": "groceries-pets",
+  "Health & Beauty": "health-beauty"
+};
+
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -56,6 +57,10 @@ export default function Header() {
       .catch((error) => console.error("Error fetching wishlist:", error));
   }, []);
 
+  const handleCategoryClick = (categoryUrl) => {
+    router.push(`/collection/${encodeURIComponent(categoryUrl)}`);
+  };
+
   if (status === "loading") return null; // Avoid rendering while checking auth
 
   return (
@@ -66,11 +71,15 @@ export default function Header() {
         <aside className="w-1/5 p-4 bg-gray-100 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Categories</h3>
           <ul className="space-y-3">
-            {categories.map((category, index) => (
-              <li key={index} className="text-gray-700 cursor-pointer hover:text-black transition">
-                {category}
-              </li>
-            ))}
+          {Object.entries(categories).map(([displayName, categoryUrl], index) => (
+          <li
+            key={index}
+            onClick={() => handleCategoryClick(categoryUrl)}
+            className="text-gray-700 cursor-pointer hover:text-black transition"
+          >
+            {displayName}
+          </li>
+        ))}
           </ul>
         </aside>
 
