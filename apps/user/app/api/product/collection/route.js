@@ -5,15 +5,21 @@ import { authOptions } from "../../../lib/auth";
 
 export async function GET(req) {
     try {
-        const { category } = await req.json();
+        const { searchParams } = new URL(req.url);
+        const category = searchParams.get("category");
+
+        if (!category) {
+            return NextResponse.json({ message: "Category is required" }, { status: 400 });
+        }
+
         const products = await prisma.product.findMany({
             where: {
                 category: category,
             },
         });
 
-        if (!products) {
-            return NextResponse.json({ message: "Products not found" }, { status: 404 });
+        if (products.length === 0) {
+            return NextResponse.json({ message: "No products found" }, { status: 200 });
         }
 
         return NextResponse.json(products);
