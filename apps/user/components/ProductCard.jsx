@@ -16,9 +16,14 @@ export default function ProductCard({ product, wishlist = [], setWishlist, updat
   const productImage = product?.image?.length > 0 ? product.image[0] : "/placeholder.png";
   const reviews = product?.reviews || [];
   const averageRating = reviews.length
-    ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length: 0;
+    ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length : 0;
 
-  const isWishlisted = wishlist.includes(product.id);
+  const [isWishlisted, setIsWishlisted] = useState(wishlist.includes(product.id));
+
+  useEffect(() => {
+    setIsWishlisted(wishlist.includes(product.id));
+  }, [wishlist]);
+
 
   // ✅ Check if the product is already in the cart when the component mounts
   useEffect(() => {
@@ -38,14 +43,14 @@ export default function ProductCard({ product, wishlist = [], setWishlist, updat
     router.push(`productdesc/${product.id}`);
   };
 
-  const toggleWishlist = async () => {
+  const toggleWishlist = async (e) => {
     if (loading) return;
     setLoading(true);
 
     try {
       if (isWishlisted) {
         await axios.post("/api/user/wishlist/removeItem", { productId: product.id });
-        setWishlist((prev) => prev.filter((id) => id !== product.id));
+        setWishlist((prev) => prev.filter((item) => item !== product.id));
       } else {
         await axios.post("/api/user/wishlist/addItem", { productId: product.id });
         setWishlist((prev) => [...prev, product.id]);
@@ -53,10 +58,10 @@ export default function ProductCard({ product, wishlist = [], setWishlist, updat
     } catch (error) {
       console.error("Wishlist update error:", error);
     }
-
     setLoading(false);
   };
-
+  
+  
   const handleAddToCart = async () => {
     try {
       await axios.post("/api/user/addToCart", { productId: product.id, choice: true });
@@ -91,20 +96,22 @@ export default function ProductCard({ product, wishlist = [], setWishlist, updat
           </button>
         )} */}
 
-        <div className="absolute top-2 right-2 flex flex-col gap-2">
-          <button
-            className={`p-2 bg-white rounded-full shadow-md hover:cursor-pointer ${
-              isWishlisted ? "text-red-500" : "text-gray-400"
-            }`}
-            onClick={toggleWishlist}
-            disabled={loading}
-          >
-            <FaHeart />
-          </button>
-          <button className="p-2 bg-white rounded-full shadow-md">
-            <Eye className="w-5 h-5 text-gray-500" />
-          </button>
-        </div>
+<div className="absolute top-2 right-2 flex flex-col gap-2 pointer-events-auto">
+  <button
+    className={`p-3 bg-white rounded-full shadow-md hover:cursor-pointer ${
+      isWishlisted ? "text-red-500" : "text-gray-400"
+    }`}
+    onClick={(e) => {
+      e.stopPropagation();
+      toggleWishlist();
+    }}
+    disabled={loading}
+    title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+  >
+    <FaHeart size={18} />
+  </button>
+</div>
+
       </div>
 
       <h3 className="mt-4 text-lg font-semibold">{product?.name || "Unnamed Product"}</h3>

@@ -1,43 +1,38 @@
-// route to get all orders of a user
-
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 
 export async function POST(req) {
-    try{
+    try {
         const session = await getServerSession(authOptions);
-        if(!session) {
+        if (!session) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
+
         const id = session.user.id;
-        const [productId] = await req.json()
-        const user = await prisma.user.findFirst({
-            where: {
-                id: id,
-            },
-            select: {
-                wishlist: true
-            }
+        const { productId } = await req.json(); // ✅ Correctly parse JSON body
+
+        const user = await prisma.user.findUnique({
+            where: { id },
+            select: { wishlist: true }
         });
-    
-        if (!user.wishlist) {
-            return NextResponse.json({ message: "Wishlist not found" }, { status: 404 });
+
+        if (!user) {
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
+        // ✅ If wishlist is an array of product IDs
         const updatedWishlist = await prisma.user.update({
             where: { id },
             data: {
-                wishlist: {
-                    set: [...new Set([...user.wishlist, productId])] // Avoid duplicate entries
-                }
+                wishlist: Array.from(new Set([...user.wishlist, productId])) // Prevent duplicates
             }
         });
 
-
         return NextResponse.json(updatedWishlist);
     } catch (error) {
+        console.error("Error in addItem:", error);
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
 }

@@ -7,6 +7,15 @@ import axios from "axios";
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
 
+  const handleRemoveFromWishlist = async (productId) => {
+    try {
+      await axios.post("http://localhost:3000/api/user/wishlist/removeItem", { productId });
+      setWishlist((prev) => prev.filter((item) => item.id !== productId)); // ✅ Update state immediately
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -48,9 +57,17 @@ const Wishlist = () => {
           {wishlist.length > 0 ? (
             wishlist.map((product) => (
               <div key={product.id} className="relative">
-                <ProductCard product={product} wishlist={wishlist.map((item) => item.id)} setWishlist={setWishlist} />
-                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
-                  <Trash2 className="w-5 h-5 text-gray-600 hover:text-red-500" />
+                <ProductCard
+                  product={product}
+                  wishlist={wishlist.map((item) => item.id)}
+                  setWishlist={setWishlist}
+                  onRemoveWishlist={handleRemoveFromWishlist} // ✅ Pass remove function
+                />
+                <button
+                  onClick={() => handleRemoveFromWishlist(product.id)}
+                  className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+                >
+                  <Trash2 className="w-5 h-5 text-red-500" />
                 </button>
               </div>
             ))
