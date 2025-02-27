@@ -2,13 +2,16 @@ import { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { Eye } from "lucide-react";
 import axios from "axios";
+import { useWishlist } from "../hooks/useWishlist";
+import { useSetRecoilState } from "recoil";
+import { wishlistAtom } from "../atoms/wishlistAtom";
 
-export default function ProductCard({ product, wishlist = [], setWishlist }) {
+export default function ProductCard({ product }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log("Product data:", product);
-  console.log(product.name);
-  console.log(product.price);
+  const wishlist = useWishlist(); // Read wishlist state
+  const setWishlist = useSetRecoilState(wishlistAtom); // Function to update wishlist
+
   if (!product) return null;
 
   const productImage = product?.image?.length > 0 ? product.image[0] : "/placeholder.png";
@@ -26,10 +29,10 @@ export default function ProductCard({ product, wishlist = [], setWishlist }) {
     try {
       if (isWishlisted) {
         await axios.post("/api/user/wishlist/removeItem", { productId: product.id });
-        setWishlist((prev) => prev.filter((id) => id !== product.id));
+        setWishlist((prev) => prev.filter((id) => id !== product.id)); // Remove from wishlist
       } else {
         await axios.post("/api/user/wishlist/addItem", { productId: product.id });
-        setWishlist((prev) => [...prev, product.id]);
+        setWishlist((prev) => [...prev, product.id]); // Add to wishlist
       }
     } catch (error) {
       console.error("Wishlist update error:", error);
