@@ -14,8 +14,16 @@ const Navbar = () => {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [hasMounted, setHasMounted] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const { data: session, status } = useSession();
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      router.push(`/searched?query=${encodeURIComponent(search)}`);
+    }
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -154,12 +162,18 @@ const Navbar = () => {
 
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300"
-            />
-            <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
+            <form onSubmit={handleSearch} className="relative">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300"
+              />
+              <button type="submit">
+                <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
+              </button>
+            </form>
           </div>
 
           <button onClick={handleWishlistClick}>
