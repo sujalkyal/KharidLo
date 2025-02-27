@@ -4,18 +4,12 @@ import { useRouter } from "next/navigation";
 import { FaHeart } from "react-icons/fa";
 import { Eye } from "lucide-react";
 import axios from "axios";
-import { useWishlist } from "../hooks/useWishlist";
-import { useSetRecoilState } from "recoil";
-import { wishlistAtom } from "../atoms/wishlistAtom";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product,wishlist=[],setWishlist }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter(); // Ensure router is initialized properly
-
-  const wishlist = useWishlist(); // Read wishlist state
-  const setWishlist = useSetRecoilState(wishlistAtom); // Function to update wishlist
+  const router = useRouter(); // Ensure router is initialized properlyt
 
   if (!product) return null;
 
