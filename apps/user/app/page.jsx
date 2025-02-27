@@ -58,7 +58,8 @@ export default function Header() {
   }, []);
 
   const handleCategoryClick = (categoryUrl) => {
-    router.push(`/collection/${encodeURIComponent(categoryUrl)}`);
+    router.push(`/collection/${encodeURIComponent(categoryUrl)}`); 
+   
   };
 
   if (status === "loading") return null; // Avoid rendering while checking auth
