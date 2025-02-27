@@ -4,7 +4,7 @@ import prisma from "@repo/db/client";
 
 export async function GET(req, { params }) {
     try{
-        const { id } = params;
+        const { id } = await params;
         const product = await prisma.Product.findFirst({
             where: {
                 id,
