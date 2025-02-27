@@ -5,7 +5,7 @@ import prisma from "@repo/db/client";
 export async function GET(req, { params }) {
     try{
         const { id } = params;
-        const product = await prisma.product.findFirst({
+        const product = await prisma.Product.findFirst({
             where: {
                 id,
             },
@@ -14,9 +14,8 @@ export async function GET(req, { params }) {
         if (!product) {
             return NextResponse.json({ message: "Product not found" }, { status: 404 });
         }
+        return NextResponse.json(product);
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }
-
-    return NextResponse.json(product);
 }
