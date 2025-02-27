@@ -1,14 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import CartItem from "../../../components/CartItem";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
-  const [loading, setLoading] = useState(true); // State to track loading
+  const [loading, setLoading] = useState(true);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   const shippingCost = 0;
+  const router = useRouter();
 
   const fetchCart = async () => {
     try {
@@ -18,7 +20,7 @@ const CartPage = () => {
     } catch (error) {
       console.error("Error fetching cart items:", error);
     } finally {
-      setLoading(false); // Stop loading after fetching data
+      setLoading(false);
     }
   };
 
@@ -38,6 +40,12 @@ const CartPage = () => {
       console.error("Error removing item:", error);
     }
   };
+
+  const handleCheckout = () => {
+    localStorage.setItem("checkoutProducts", JSON.stringify(cart));
+    router.push("/cart/checkout");
+  };
+  
 
   if (loading) {
     return (
@@ -70,7 +78,6 @@ const CartPage = () => {
         ))}
       </div>
 
-      {/* Cart Summary - Only shown when cart is not empty */}
       <div className="mt-8 p-6 border rounded-lg shadow-md w-96">
         <h3 className="text-lg font-semibold mb-4">Cart Total</h3>
         <p className="flex justify-between">
@@ -83,7 +90,10 @@ const CartPage = () => {
         <p className="flex justify-between font-bold text-lg">
           <span>Total:</span> <span>${(subtotal + shippingCost).toFixed(2)}</span>
         </p>
-        <button className="w-full mt-4 bg-red-500 text-white py-2 rounded-md hover:cursor-pointer">
+        <button 
+          className="w-full mt-4 bg-red-500 text-white py-2 rounded-md hover:cursor-pointer"
+          onClick={handleCheckout}
+        >
           Proceed to Checkout
         </button>
       </div>
