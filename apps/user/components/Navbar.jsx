@@ -4,18 +4,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { signOut, useSession, getSession } from "next-auth/react";
 import { toast } from "react-toastify";
 
-
 const Navbar = () => {
-  const [cartCount, setCartCount] = useState(0);
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [hasMounted, setHasMounted] = useState(false);
+  const [search, setSearch] = useState("");
   const pathname = usePathname();
   const { data: session, status } = useSession();
-  const [search, setSearch] = useState("");
   const router = useRouter();
 
   const handleSearch = (e) => {
@@ -36,170 +31,84 @@ const Navbar = () => {
     router.push("/api/auth/signin");
   };
 
-  useEffect(() => {
-    setHasMounted(true);
-
-    if (!session) return;
-
-    async function fetchCartDetails() {
-      try {
-        const response = await axios.get("/api/user/getCartDetails");
-        if (response.status === 200 && response.data.result) {
-          const cartItems = response.data.result;
-          const count = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-          setCartCount(count);
-        } else {
-          setCartCount(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch cart details:", error);
-        setCartCount(0);
-      }
-    }
-
-    async function fetchWishlistDetails() {
-      try {
-        const response = await axios.get("/api/user/wishlist/getAllItems");
-        if (response.status === 200 && Array.isArray(response.data)) {
-          setWishlistCount(response.data.length);
-        } else {
-          setWishlistCount(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch wishlist details:", error);
-        setWishlistCount(0);
-      }
-    }
-
-    fetchCartDetails();
-    fetchWishlistDetails();
-  }, [session]);
-
-
-  const handleHomeClick = async () => {
+  const handleNavigation = async (path) => {
     const userSession = await getSession();
     if (!userSession) {
-      toast.error("Please log in to access Home", { position: "top-center" });
+      toast.error(`Please log in to access ${path.replace("/", "")}`, { position: "top-center" });
     } else {
-      router.push("/");
+      router.push(path);
     }
   };
 
-  const handleWishlistClick = async () => {
-    const userSession = await getSession();
-    if (!userSession) {
-      toast.error("Please log in to access Wishlist", { position: "top-center" });
-    } else {
-      router.push("/wishlist");
-    }
-  }
-
-  const handleCartClick = async () => {
-    const userSession = await getSession();
-    if (!userSession) {
-      toast.error("Please log in to access Cart", { position: "top-center" });
-    } else {
-      router.push("/cart");
-    }
-  }
-
-  const handleAccountClick = async () => {
-    const userSession = await getSession();
-    if (!userSession) {
-      toast.error("Please log in to access Account", { position: "top-center" });
-    } else {
-      router.push("/account");
-    }
-  }
-
-
   return (
-    <header className="w-full border-b">
-      <nav className="flex justify-between items-center py-6 px-8 bg-white shadow-md">
+    <header className="w-full border-b bg-white shadow-md">
+      <nav className="flex justify-between items-center py-5 px-10">
+        {/* Logo */}
         <Link href="/">
-          <div className="text-2xl font-bold cursor-pointer">KHARID LO</div>
+          <div className="text-3xl font-extrabold text-gray-800 tracking-wide cursor-pointer">
+            KHARID <span className="text-red-500">LO</span>
+          </div>
         </Link>
 
-        <ul className="flex space-x-6 text-lg">
+        {/* Navigation Links */}
+        <ul className="flex space-x-8 text-lg font-medium">
           <li>
-            <button onClick={handleHomeClick} className="cursor-pointer font-medium text-gray-600 hover:text-black">
+            <button onClick={() => handleNavigation("/")} className="hover:text-red-500 transition hover:cursor-pointer">
               Home
             </button>
           </li>
           <li>
-            <Link
-              href="/contact"
-              className={`cursor-pointer ${pathname === "/contact" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-                }`}
-            >
+            <Link href="/contact" className={`hover:text-red-500 transition ${pathname === "/contact" ? "border-b-2 border-red-500" : ""}`}>
               Contact
             </Link>
           </li>
           <li>
-            <Link
-              href="/about"
-              className={`cursor-pointer ${pathname === "/about" ? "border-b-2 border-black" : "text-gray-600 hover:text-black"
-                }`}
-            >
+            <Link href="/about" className={`hover:text-red-500 transition ${pathname === "/about" ? "border-b-2 border-red-500" : ""}`}>
               About
             </Link>
           </li>
           <li>
             {session ? (
-              <button onClick={handleLogOut} className="text-gray-600 hover:text-black">
+              <button onClick={handleLogOut} className="hover:text-red-500 transition hover:cursor-pointer">
                 Log Out
               </button>
             ) : (
-              <Link
-                href="/api/auth/signin"
-                className="text-gray-600 hover:text-black"
-              >
+              <Link href="/api/auth/signin" className="hover:text-red-500 transition hover:cursor-pointer">
                 Sign Up
               </Link>
             )}
           </li>
         </ul>
 
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <form onSubmit={handleSearch} className="relative">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="border px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-gray-300"
-              />
-              <button type="submit">
-                <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
-              </button>
-            </form>
-          </div>
+        {/* Icons Section */}
+        <div className="flex items-center space-x-6">
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="border px-4 py-2 rounded-full outline-none focus:ring-2 focus:ring-red-500 transition w-48"
+            />
+            <button type="submit">
+              <FiSearch className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
+            </button>
+          </form>
 
-          <button onClick={handleWishlistClick}>
-            <div className="relative">
-              <FiHeart className="text-2xl cursor-pointer hover:text-gray-700" />
-              {hasMounted && wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {wishlistCount}
-                </span>
-              )}
-            </div>
+          {/* Wishlist Icon */}
+          <button onClick={() => handleNavigation("/wishlist")}>
+            <FiHeart className="text-2xl cursor-pointer text-gray-700 hover:text-red-500 transition" />
           </button>
 
-          <button onClick={handleCartClick}>
-            <div className="relative">
-              <FiShoppingCart className="text-2xl cursor-pointer hover:text-gray-700" />
-              {hasMounted && cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </div>
+          {/* Cart Icon */}
+          <button onClick={() => handleNavigation("/cart")}>
+            <FiShoppingCart className="text-2xl cursor-pointer text-gray-700 hover:text-red-500 transition" />
           </button>
 
-          <button onClick={handleAccountClick}>
-            <FiUser className="text-2xl cursor-pointer hover:text-gray-700" />
+          {/* User Account Icon */}
+          <button onClick={() => handleNavigation("/account")}>
+            <FiUser className="text-2xl cursor-pointer text-gray-700 hover:text-red-500 transition" />
           </button>
         </div>
       </nav>
