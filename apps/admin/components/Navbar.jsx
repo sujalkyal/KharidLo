@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
 import { signOut, useSession, getSession } from "next-auth/react";
-import { toast } from "react-toastify";
+
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -13,7 +13,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/api/auth/signin");
+      router.push("http://localhost:3001/api/auth/signin");
     }
   }, [status, router]);
 
