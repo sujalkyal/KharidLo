@@ -116,7 +116,7 @@ const CheckoutComponent = ({ products }) => {
             <span>Cash on delivery</span>
           </label>
         </div>
-        <button className="mt-6 bg-red-500 text-white py-3 rounded-md w-full text-lg font-medium" onClick={handlePlaceOrder}>Place Order</button>
+        <button className="mt-6 bg-red-500 text-white py-3 rounded-md w-full text-lg font-medium hover:cursor-pointer" onClick={handlePlaceOrder}>Place Order</button>
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-// route to add a review for a product
-
 import { NextResponse } from "next/server";
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
@@ -12,7 +10,6 @@ export async function POST(req) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const userId = session.user.id;
-        //const userId = "28d82cba-fcc6-4c93-a213-4961fc58e542";
 
         const { productId, rating, comment } = await req.json();
 
@@ -31,9 +28,12 @@ export async function POST(req) {
                 userId,
                 rating,
                 comment
+            },
+            include: {
+                user: true // Include user details in response
             }
         });
-        
+
         return NextResponse.json({ message: "Review added successfully", review: newReview }, { status: 201 });
     } catch (error) {
         console.error("Error adding review:", error);
