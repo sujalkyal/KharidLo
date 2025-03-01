@@ -35,7 +35,7 @@ export async function GET(req) {
         // Fetch product details
         const products = await prisma.product.findMany({
             where: { id: { in: topProductIds } },
-            select: { id: true, name: true, price: true, image: true },
+            select: { id: true, name: true, price: true, image: true, stock: true, description: true },
         });
 
         return NextResponse.json({ products }, { status: 200 });

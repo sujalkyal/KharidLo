@@ -1,3 +1,7 @@
+
+
+
+
 "use client";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,8 +19,12 @@ export default function ProductPage() {
   const [product, setProduct] = useState(null);
   const [wishlist, setWishlist] = useState([]);
   const [isHydrated, setIsHydrated] = useState(false);
-  const [inCart, setInCart] = useState(false); // ✅ Track if the item is in the cart
+  const [inCart, setInCart] = useState(false); // Track if the item is in the cart
   const [loading, setLoading] = useState(false);
+  const reviews = product?.reviews || [];
+  const reviewCount = reviews.length;
+  const averageRating = reviews.length
+    ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length : 0;
 
   useEffect(() => {
     setIsHydrated(true);
@@ -44,8 +52,19 @@ export default function ProductPage() {
       }
     };
 
+    const fetchWishlist = async () => {
+      try {
+        const response = await axios.get("/api/user/wishlist/getAllItems");
+        const wishlistItems = response.data || [];
+        setWishlist(wishlistItems.map((item) => item.id)); // Store only product IDs
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    };
+
     fetchProduct();
     checkCart();
+    fetchWishlist(); // Fetch wishlist data on initial load
   }, [id, isHydrated]);
 
   if (!isHydrated || !product) return <p className="text-center text-gray-500 text-lg">Loading...</p>;
@@ -85,7 +104,7 @@ export default function ProductPage() {
       <div className="flex flex-col md:flex-row bg-white p-10 shadow-xl rounded-3xl">
         {/* Image Section */}
         <div className="w-full md:w-1/2 flex flex-col items-center">
-          <Swiper navigation pagination={{ clickable: true }} modules={[Navigation, Pagination]} className="w-full rounded-xl shadow-lg">  
+          <Swiper navigation pagination={{ clickable: true }} modules={[Navigation, Pagination]} className="w-full rounded-xl shadow-lg">
             {product.image.map((img, index) => (
               <SwiperSlide key={index}>
                 <Image src={img} alt={product.name} width={600} height={600} className="rounded-xl object-cover" />
@@ -103,8 +122,10 @@ export default function ProductPage() {
           <div>
             <h1 className="text-4xl font-extrabold text-gray-900 mb-2">{product.name}</h1>
             <div className="flex items-center space-x-2 text-lg text-gray-600">
-              <span className="text-yellow-500 text-2xl">★★★★☆</span>
-              <span>(150 Reviews)</span>
+              <span className="text-yellow-500 text-2xl">
+              {"★".repeat(Math.round(averageRating))}{"☆".repeat(5 - Math.round(averageRating))}
+              </span>
+              <span>{reviewCount}</span>
               <span className="text-green-600 ml-4">In Stock</span>
             </div>
             <p className="text-3xl font-semibold text-gray-800 mt-4">${product.price}</p>
