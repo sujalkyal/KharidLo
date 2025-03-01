@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-toastify";
 import CartItem from "../../../components/CartItem";
 
 const CartPage = () => {
@@ -41,12 +42,12 @@ const CartPage = () => {
     }
   };
 
-  const handleCheckout = () => {
-    localStorage.setItem("checkoutProducts", JSON.stringify(cart));
-    router.push("/cart/checkout");
+  const handleCheckout = async () => {
+      
+      localStorage.setItem("checkoutProducts", JSON.stringify(cart));
+      router.push("/cart/checkout");
   };
   
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen text-2xl text-gray-500">
