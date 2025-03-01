@@ -5,14 +5,15 @@ import prisma from "@repo/db/client";
 
 export async function POST(req) {
     try{
-        const {name,image,description,price,stock} = await req.json();
+        const {name,image,description,price,stock,category} = await req.json();
         const product = await prisma.product.create({
             data:{
                 name,
-                image,
+                image: { set: image },
                 description,
                 price,
-                stock
+                stock,
+                category
             }
         });    
         return NextResponse.json({product});
