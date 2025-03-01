@@ -66,7 +66,7 @@ export default function AddProduct() {
       });
 
       toast.success("Product added successfully!");
-      router.push("/admin/products");
+      router.push("/products");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add product");
     }
