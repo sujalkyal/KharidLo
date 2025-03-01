@@ -1,50 +1,75 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useEffect } from "react";
+import { signOut, useSession, getSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname(); // Fix: Define pathname
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/api/auth/signin");
+    }
+  }, [status, router]);
+
+  const handleLogOut = async () => {
+    await signOut();
+    router.push("/api/auth/signin");
+  };
 
   return (
-    <nav className="bg-black text-white px-6 py-3 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Centered Navigation Links */}
-        <div className="flex-1 flex justify-center space-x-8">
-          <Link href="/admin/dashboard" className="hover:text-gray-300">
-            Dashboard
-          </Link>
-          <Link href="/admin/products" className="hover:text-gray-300">
-            Products
-          </Link>
-          <Link href="/admin/customers" className="hover:text-gray-300">
-            Customers
-          </Link>
-          <Link href="/admin/sales" className="hover:text-gray-300">
-            Sales
-          </Link>
-        </div>
+    <header className="w-full border-b bg-white shadow-md">
+      <nav className="flex justify-between items-center py-5 px-10">
+        <Link href="/">
+          <div className="text-3xl font-extrabold text-gray-800 tracking-wide cursor-pointer">
+            KHARID <span className="text-red-500">LO</span>
+          </div>
+        </Link>
 
-        {/* Logout or Sign In Button on the Right */}
-        <div>
-          {session ? (
-            <button
-              onClick={() => signOut()}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white"
-            >
-              Logout
-            </button>
-          ) : (
-            <button
-              onClick={() => signIn()}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-white"
-            >
-              Sign In
-            </button>
-          )}
-        </div>
-      </div>
-    </nav>
+        <ul className="flex space-x-8 text-lg font-medium mx-auto">
+          {["/dashboard", "/products", "/customers", "/sales"].map((path) => (
+            <li key={path}>
+              <Link
+                href={path}
+                className={`hover:text-red-500 transition ${
+                  pathname === path ? "border-b-2 border-red-500" : ""
+                }`}
+              >
+                {path.replace("/", "").charAt(0).toUpperCase() +
+                  path.replace("/", "").slice(1)}
+              </Link>
+            </li>
+          ))}
+          </ul>
+
+          <ul className="flex space-x-8 text-lg font-medium">
+
+          <li>
+            {session ? (
+              <button
+                onClick={handleLogOut}
+                className="hover:text-red-500 transition hover:cursor-pointer"
+              >
+                Log Out
+              </button>
+            ) : (
+              <Link
+                href="/api/auth/signin"
+                className="hover:text-red-500 transition hover:cursor-pointer"
+              >
+                Sign Up
+              </Link>
+            )}
+          </li>
+          </ul>
+
+      </nav>
+    </header>
   );
 };
 
