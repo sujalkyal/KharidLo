@@ -117,7 +117,7 @@ export default function ProductPage() {
       <div className="flex flex-col md:flex-row bg-white p-10 shadow-xl rounded-3xl">
         {/* Image Section */}
         <div className="w-full md:w-1/2 flex flex-col items-center">
-          <Swiper navigation pagination={{ clickable: true }} modules={[Navigation, Pagination]} className="w-full rounded-xl shadow-lg">  
+          <Swiper navigation pagination={{ clickable: true }} modules={[Navigation, Pagination]} className="w-full rounded-xl shadow-lg">
             {product.image.map((img, index) => (
               <SwiperSlide key={index}>
                 <Image src={img} alt={product.name} width={600} height={600} className="rounded-xl object-cover" />
@@ -148,15 +148,15 @@ export default function ProductPage() {
             </button>
           </div>
           <div className="mt-6 border p-4 rounded-lg">
-              <h3 className="text-xl font-semibold">Add Your Review</h3>
-              <select className="w-full border p-2 rounded mt-2" value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
-                {[5, 4, 3, 2, 1].map((star) => (
-                  <option key={star} value={star}>{star} Stars</option>
-                ))}
-              </select>
-              <textarea className="w-full border p-2 rounded mt-2" placeholder="Write your review..." value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}></textarea>
-              <button onClick={handleReviewSubmit} className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:cursor-pointer">Submit Review</button>
-            </div>
+            <h3 className="text-xl font-semibold">Add Your Review</h3>
+            <select className="w-full border p-2 rounded mt-2" value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
+              {[5, 4, 3, 2, 1].map((star) => (
+                <option key={star} value={star}>{star} Stars</option>
+              ))}
+            </select>
+            <textarea className="w-full border p-2 rounded mt-2" placeholder="Write your review..." value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}></textarea>
+            <button onClick={handleReviewSubmit} className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:cursor-pointer">Submit Review</button>
+          </div>
           {/* Review Section */}
           <div className="mt-8">
             <h2 className="text-2xl font-bold">Customer Reviews</h2>
@@ -172,7 +172,7 @@ export default function ProductPage() {
               ) : (
                 <p className="text-gray-500">No reviews yet.</p>
               )}
-            </div>            
+            </div>
           </div>
         </div>
       </div>
