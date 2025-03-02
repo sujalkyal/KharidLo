@@ -53,42 +53,39 @@ const Dashboard = () => {
     return acc;
   }, []);
 
-  const COLORS = ["#6C63FF", "#FF6584", "#46C0AE", "#FFD700"];
+  const COLORS = ["#FF0000", "#D70000", "#B20000", "#8B0000"];
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen font-sans">
-      <h2 className="text-4xl font-bold mb-8 text-gray-900 text-center">Admin Dashboard</h2>
+    <div className="p-8 bg-white min-h-screen font-sans text-black">
+      <h2 className="text-4xl font-bold mb-8 text-red-600 text-center">Admin Dashboard</h2>
       {loading ? (
-        <p className="text-center text-gray-500 text-lg">Loading...</p>
+        <p className="text-center text-gray-600 text-lg">Loading...</p>
       ) : (
         <>
-          {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {[{ title: "Total Revenue", value: `$${totalRevenue}` }, { title: "Total Orders", value: totalOrders }, { title: "Total Users", value: totalUsers }].map((stat, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition-all">
-                <h3 className="text-xl font-semibold text-gray-700">{stat.title}</h3>
-                <p className="text-2xl font-bold text-indigo-600 mt-2">{stat.value}</p>
+              <div key={index} className="bg-red-100 p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all">
+                <h3 className="text-xl font-semibold text-red-700">{stat.title}</h3>
+                <p className="text-3xl font-bold text-red-600 mt-2">{stat.value}</p>
               </div>
             ))}
           </div>
 
-          {/* Sales Trend */}
-          <div className="bg-white shadow-md p-8 rounded-xl mb-8">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-4">Sales Trend</h3>
+          <div className="bg-gray-100 shadow-lg p-8 rounded-xl mb-8">
+            <h3 className="text-2xl font-semibold text-red-600 mb-4">Sales Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesTrendData}>
-                <XAxis dataKey="date" stroke="#8884d8" />
-                <YAxis />
+                <XAxis dataKey="date" stroke="#FF0000" />
+                <YAxis stroke="#FF0000" />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#6C63FF" strokeWidth={3} dot={{ r: 6 }} />
+                <Line type="monotone" dataKey="sales" stroke="#FF0000" strokeWidth={3} dot={{ r: 6, fill: "#FF0000" }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Order Status Pie Chart */}
-          <div className="bg-white shadow-md p-8 rounded-xl">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-4">Order Status Breakdown</h3>
+          <div className="bg-gray-100 shadow-lg p-8 rounded-xl">
+            <h3 className="text-2xl font-semibold text-red-600 mb-4">Order Status Breakdown</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie data={statusData} dataKey="value" nameKey="status" cx="50%" cy="50%" outerRadius={110} label>
