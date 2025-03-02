@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "../components/Navbar";
@@ -15,11 +14,7 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({children}) {
   return (
     <SessionProvider>
     <html lang="en">
