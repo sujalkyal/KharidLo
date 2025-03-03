@@ -7,9 +7,12 @@ import axios from "axios";
 export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
+  const [orders, setOrders] = useState([]);
   const menuRef = useRef(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [editProduct, setEditProduct] = useState(null); // State for edit modal
+  const [addImageProduct, setAddImageProduct] = useState(null); // For add image modal
+  const [newImageUrl, setNewImageUrl] = useState(""); // New image URL input
   const router = useRouter();
 
   useEffect(() => {
@@ -21,6 +24,17 @@ export default function ProductPage() {
         console.error("Error fetching products:", error);
       }
     };
+
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("/api/sales/getAllOrders");
+        setOrders(Array.isArray(response.data.orders) ? response.data.orders : []);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
     fetchProducts();
   }, []);
 
@@ -37,6 +51,13 @@ export default function ProductPage() {
     };
   }, []);
 
+  const calculateOrdersCount = (productId) => {
+    return orders.reduce((count, order) => {
+      const productOrders = order.products.filter((p) => p.productId === productId);
+      return count + productOrders.reduce((sum, p) => sum + (p.quantity || 0), 0);
+    }, 0);
+  };
+
   const handleMenuClick = (event, product) => {
     event.stopPropagation();
     const rect = event.currentTarget.getBoundingClientRect();
@@ -52,6 +73,12 @@ export default function ProductPage() {
     console.log("Editing Product:", product); // Debugging log
     if (!product) return;
     setEditProduct(product);
+    setMenuOpen(null);
+  };
+
+  const openAddImageModal = (product) => {
+    if (!product) return;
+    setAddImageProduct(product);
     setMenuOpen(null);
   };
 
@@ -76,6 +103,31 @@ export default function ProductPage() {
       console.error("Error updating product:", error);
     }
   };
+
+
+  const handleAddImageSubmit = async (event) => {
+    event.preventDefault();
+    if (!newImageUrl || !addImageProduct) return;
+    try {
+      await axios.post("/api/product/addNewImage", {
+        productId: addImageProduct.id,
+        imageUrl: newImageUrl,
+      });
+      // Update the product's image array in the UI:
+      setProducts((prevProducts) =>
+        prevProducts.map((prod) =>
+          prod.id === addImageProduct.id
+            ? { ...prod, image: [...(prod.image || []), newImageUrl] }
+            : prod
+        )
+      );
+      setAddImageProduct(null);
+      setNewImageUrl("");
+    } catch (error) {
+      console.error("Error adding image:", error);
+    }
+  };
+
 
   return (
     <div className="bg-white text-black min-h-screen p-8">
@@ -111,7 +163,7 @@ export default function ProductPage() {
                   </td>
                   <td className="w-1/5 p-3 font-medium truncate">{product.name}</td>
                   <td className="w-1/5 p-3">${product.price}</td>
-                  <td className="w-1/5 p-3">{product.orders}</td>
+                  <td className="w-1/5 p-3">{calculateOrdersCount(product.id)}</td>
                   <td className="w-1/5 p-3 text-right">
                     <button
                       className="text-gray-600 text-lg px-2 py-1 rounded hover:bg-gray-200"
@@ -140,7 +192,7 @@ export default function ProductPage() {
             </button>
             <button
               className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-              onClick={() => console.log("Add Image", menuOpen)}
+              onClick={() => openAddImageModal(products.find((p) => p.id === menuOpen))}
             >
               🖼️ Add Image
             </button>
@@ -195,6 +247,44 @@ export default function ProductPage() {
             </div>
           </div>
         )}
+
+{addImageProduct && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h2 className="text-xl font-semibold mb-4">
+                Add Image to {addImageProduct.name}
+              </h2>
+              <form onSubmit={handleAddImageSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium">Image URL</label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded"
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-300 rounded"
+                    onClick={() => {
+                      setAddImageProduct(null);
+                      setNewImageUrl("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                    Add Image
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+
       </div>
     </div>
   );
