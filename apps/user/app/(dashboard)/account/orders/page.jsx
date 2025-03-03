@@ -16,7 +16,6 @@ export default function OrdersPage() {
       try {
         const response = await axios.get("http://localhost:3000/api/user/getAllOrders");
         setOrders(response.data);
-        console.log("Orders fetched:", response.data); // Debugging
       } catch (error) {
         toast.error("Failed to load orders");
       }
@@ -27,53 +26,44 @@ export default function OrdersPage() {
   const generateInvoice = (order) => {
     try {
       const doc = new jsPDF();
-
-      // Header
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.text("INVOICE", 14, 20);
-      doc.setFontSize(12);
-      doc.text("KHARID LO", 14, 30);
-      doc.text("Luxury Shoes & Watches", 14, 38);
-      doc.text("www.kharidlo.com", 14, 46);
-      doc.text("------------------------------------------------", 14, 50);
+      doc.setFontSize(22);
+      doc.text("KHARID LO", 105, 20, null, null, "center");
+      doc.setFontSize(14);
+      doc.text("Luxury Shoes & Watches", 105, 30, null, null, "center");
+      doc.text("www.kharidlo.com", 105, 40, null, null, "center");
+      doc.line(10, 50, 200, 50);
 
-      // User & Order Details
       doc.setFont("helvetica", "normal");
-      doc.text(`Order ID: ${order.id || "N/A"}`, 14, 60);
-      doc.text(`Date: ${order.createdAt || "N/A"}`, 14, 68);
-      doc.text(`Customer: ${order.user?.name || "N/A"}`, 14, 76);
-      doc.text(`Email: ${order.user?.email || "N/A"}`, 14, 84);
-      doc.text(`Phone: ${order.phone || "N/A"}`, 14, 92);
-      doc.text(`Shipping Address: ${order.address || "N/A"}`, 14, 100);
+      doc.text(`Invoice No: ${order.id}`, 10, 60);
+      doc.text(`Date: ${order.createdAt}`, 10, 70);
 
-      // Table for Ordered Items
-      const tableColumn = ["Product ID", "Quantity", "Price"];
+      doc.text("Bill To:", 10, 85);
+      doc.text(`${order.name || "N/A"}`, 10, 95);
+      doc.text(`${order.address || "N/A"}`, 10, 105);
+      doc.text(`${order.phone || "N/A"}`, 10, 115);
+
+      const tableColumn = ["Product", "Qty", "Price", "Total"];
       const tableRows = order.products?.map((product) => [
         product.productId || "N/A",
         product.quantity || 0,
+        //
         `₹${product.price || 0}`,
+        `₹${(product.price || 0) * (product.quantity || 0)}`,
       ]) || [];
 
       autoTable(doc, {
-        startY: 110,
+        startY: 130,
         head: [tableColumn],
         body: tableRows,
+        styles: { halign: "center" },
       });
 
-      // Get Final Y Position
-      const finalY = doc.lastAutoTable.finalY || 130; // Prevent undefined error
-
-      // Total Amount
-      doc.text(`Total Amount: ₹${order.amount || 0}`, 14, finalY + 10);
-      doc.text("Thank you for shopping with us!", 14, finalY + 20);
-
-      // Save PDF
+      const finalY = doc.lastAutoTable.finalY || 150;
+      doc.text(`Total Amount: ₹${order.amount || 0}`, 10, finalY + 10);
+      doc.text("Thank you for shopping with us!", 10, finalY + 20);
       doc.save(`Invoice_Order_${order.id}.pdf`);
-
-      console.log("Invoice generated successfully");
     } catch (error) {
-      console.error("Error generating invoice:", error);
       toast.error("Failed to generate invoice");
     }
   };
@@ -100,7 +90,6 @@ export default function OrdersPage() {
             </div>
             <div className="w-3/4 pl-6">
               <h3 className="text-lg font-semibold text-red-500 mb-4">Your Orders</h3>
-
               {orders.length === 0 ? (
                 <p className="text-gray-500">You have no orders yet.</p>
               ) : (
@@ -111,8 +100,12 @@ export default function OrdersPage() {
                       <p><strong>Date:</strong> {order.createdAt}</p>
                       <p><strong>Address:</strong> {order.address}, {order.phone}</p>
                       <p><strong>Total Amount:</strong> ₹{order.amount}</p>
-                      <p><strong>Status:</strong> <span className="text-red-500 font-semibold">{order.status}</span></p>
-                      
+                      <p>
+                        <strong>Status:</strong> 
+                        <span className={`font-semibold ${order.status === "pending" ? "text-red-500" : "text-green-500"}`}>
+                          {order.status}
+                        </span>
+                      </p>                      
                       <h4 className="text-md font-semibold mt-4">Items:</h4>
                       <ul className="list-disc list-inside text-gray-600">
                         {order.products?.map((product, index) => (
@@ -121,17 +114,14 @@ export default function OrdersPage() {
                           </li>
                         ))}
                       </ul>
-
-                      {/* Download Invoice Button */}
-                      <button
-                        onClick={() => {
-                          console.log("Generating invoice for order:", order);
-                          generateInvoice(order);
-                        }}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer block"
-                      >
-                        Download Invoice
-                      </button>
+                      {order.status === "completed" && (
+                        <button
+                          onClick={() => generateInvoice(order)}
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer block"
+                        >
+                          Download Invoice
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
