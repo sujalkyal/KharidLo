@@ -23,17 +23,16 @@ export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/login");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.replace("/api/auth/signin");
+  //   }
+  // }, [status, router]);
 
-  if (status === "loading") {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+  // if (status === "loading") {
+  //   return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  // }
 
-  if (!session) return null;
 
   const [wishlist, setWishlist] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);

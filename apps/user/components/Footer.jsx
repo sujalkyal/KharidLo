@@ -65,8 +65,8 @@ const Footer = () => {
               className="w-16 h-16 bg-white p-1"
             />
             <div className="flex flex-col space-y-2">
-              <img src="/google-play.png" alt="Google Play" className="w-32" />
-              <img src="/app-store.png" alt="App Store" className="w-32" />
+              <img src="/google-play.png" alt="Google Play" className="w-7" />
+              <img src="/app-store.jpeg" alt="App Store" className="w-7" />
             </div>
           </div>
           <div className="mt-4 flex space-x-4 text-gray-400">
