@@ -44,11 +44,11 @@ const Navbar = () => {
     <header className="w-full border-b bg-white shadow-md">
       <nav className="flex justify-between items-center py-5 px-10">
         {/* Logo */}
-        <Link href="/">
+        <button onClick={() => handleNavigation("/")}>
           <div className="text-3xl font-extrabold text-gray-800 tracking-wide cursor-pointer">
             KHARID <span className="text-red-500">LO</span>
           </div>
-        </Link>
+        </button>
 
         {/* Navigation Links */}
         <ul className="flex space-x-8 text-lg font-medium">
