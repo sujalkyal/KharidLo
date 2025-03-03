@@ -17,9 +17,9 @@ export async function GET(req) {
             select: { cart: true }
         });
 
-        if (!user) {
-            return NextResponse.json({ message: "Cart is empty" }, { status: 404 });
-        }
+        // if (!user) {
+        //     return NextResponse.json({ message: "Cart is empty" }, { status: 404 });
+        // }
 
         let result = [];
         const platformFee = 20;

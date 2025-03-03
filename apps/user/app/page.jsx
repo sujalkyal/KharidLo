@@ -19,10 +19,21 @@ const categories = {
   "Health & Beauty": "health-beauty"
 };
 
-
 export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (!session) return null;
 
   const [wishlist, setWishlist] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
@@ -59,45 +70,34 @@ export default function Header() {
 
   const handleCategoryClick = (categoryUrl) => {
     router.push(`/collection/${encodeURIComponent(categoryUrl)}`); 
-   
   };
-
-  if (status === "loading") return null; // Avoid rendering while checking auth
 
   return (
     <>
-      {/* Hero Section with Sidebar & Carousel */}
       <div className="flex w-full px-10 py-8 space-x-6">
-        {/* Category Sidebar */}
         <aside className="w-1/5 p-4 bg-gray-100 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Categories</h3>
           <ul className="space-y-3">
-          {Object.entries(categories).map(([displayName, categoryUrl], index) => (
-          <li
-            key={index}
-            onClick={() => handleCategoryClick(categoryUrl)}
-            className="text-gray-700 cursor-pointer hover:text-black transition"
-          >
-            {displayName}
-          </li>
-        ))}
+            {Object.entries(categories).map(([displayName, categoryUrl], index) => (
+              <li
+                key={index}
+                onClick={() => handleCategoryClick(categoryUrl)}
+                className="text-gray-700 cursor-pointer hover:text-black transition"
+              >
+                {displayName}
+              </li>
+            ))}
           </ul>
         </aside>
-
-        {/* Vertical Divider */}
         <div className="w-[1px] bg-gray-300"></div>
-
-        {/* Carousel Section */}
         <div className="flex-grow my-auto">
           <Carousel />
         </div>
       </div>
 
-      {/* Section Divider */}
       <hr className="border-gray-300 my-6 w-[90%] mx-auto" />
 
       <div className="px-10 py-6 space-y-10">
-        {/* Best Selling Products */}
         <section className="w-full bg-white p-6 shadow-md rounded-lg">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Best Selling Products</h2>
@@ -112,10 +112,8 @@ export default function Header() {
           </div>
         </section>
 
-        {/* Section Divider */}
         <hr className="border-gray-300 w-[90%] mx-auto" />
 
-        {/* All Products */}
         <section className="w-full bg-white p-6 shadow-md rounded-lg">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">All Products</h2>
@@ -133,16 +131,10 @@ export default function Header() {
           </div>
         </section>
 
-        {/* Section Divider */}
         <hr className="border-gray-300 w-[90%] mx-auto" />
-
-        {/* Categories Section */}
         <CategorySection />
-
-        {/* Section Divider */}
         <hr className="border-gray-300 w-[90%] mx-auto" />
 
-        {/* Newly Added Products */}
         <section className="w-full bg-white p-6 shadow-md rounded-lg">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Newly Added Products</h2>
@@ -157,7 +149,6 @@ export default function Header() {
           </div>
         </section>
 
-        {/* Feature Card Section */}
         <FeatureCard />
       </div>
     </>
