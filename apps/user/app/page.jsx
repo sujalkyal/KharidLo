@@ -22,7 +22,6 @@ const categories = {
 export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
   const [wishlist, setWishlist] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);

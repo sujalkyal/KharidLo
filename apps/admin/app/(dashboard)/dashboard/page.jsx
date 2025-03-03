@@ -57,7 +57,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-8 bg-white min-h-screen font-sans text-black">
-      <h2 className="text-4xl font-bold mb-8 text-red-600 text-center">Admin Dashboard</h2>
+      <h2 className="text-4xl font-bold mb-8 text-red-500 text-center">Admin Dashboard</h2>
       {loading ? (
         <p className="text-center text-gray-600 text-lg">Loading...</p>
       ) : (
@@ -65,7 +65,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {[{ title: "Total Revenue", value: `$${totalRevenue}` }, { title: "Total Orders", value: totalOrders }, { title: "Total Users", value: totalUsers }].map((stat, index) => (
               <div key={index} className="bg-red-100 p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all">
-                <h3 className="text-xl font-semibold text-red-700">{stat.title}</h3>
+                <h3 className="text-xl font-semibold text-red-00">{stat.title}</h3>
                 <p className="text-3xl font-bold text-red-600 mt-2">{stat.value}</p>
               </div>
             ))}
