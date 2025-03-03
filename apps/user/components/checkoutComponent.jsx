@@ -56,6 +56,12 @@ const CheckoutComponent = ({ products }) => {
         },
       });
 
+      if(response.data.success === false) {
+        toast.error(response.data.message);
+        router.push("/cart");
+        return;
+      }
+
       toast.success("Order placed successfully!");
       router.push("/");
     } catch (error) {
