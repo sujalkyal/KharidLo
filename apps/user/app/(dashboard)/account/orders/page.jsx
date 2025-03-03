@@ -25,50 +25,84 @@ export default function OrdersPage() {
     };
     fetchOrders();
   }, []);
-
+  
   const generateInvoice = (order) => {
     try {
+      if (!order || !order.id) {
+        throw new Error("Invalid order data");
+      }
+  
       const doc = new jsPDF();
+  
+      // Header Section
       doc.setFont("helvetica", "bold");
       doc.setFontSize(22);
-      doc.text("KHARID LO", 105, 20, null, null, "center");
+      doc.text("KHARID LO", 105, 20, { align: "center" });
+  
       doc.setFontSize(14);
-      doc.text("Luxury Shoes & Watches", 105, 30, null, null, "center");
-      doc.text("www.kharidlo.com", 105, 40, null, null, "center");
+      doc.text("Luxury Brand", 105, 30, { align: "center" });
+      doc.text("www.kharidlo.com", 105, 40, { align: "center" });
+  
+      doc.setLineWidth(0.5);
       doc.line(10, 50, 200, 50);
-
+  
+      // Invoice & Customer Details
+      doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
       doc.text(`Invoice No: ${order.id}`, 10, 60);
-      doc.text(`Date: ${order.createdAt}`, 10, 70);
-
+      doc.text(`Date: ${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}`, 10, 70);
+  
       doc.text("Bill To:", 10, 85);
+      doc.setFont("helvetica", "bold");
       doc.text(`${order.name || "N/A"}`, 10, 95);
+      doc.setFont("helvetica", "normal");
       doc.text(`${order.address || "N/A"}`, 10, 105);
-      doc.text(`${order.phone || "N/A"}`, 10, 115);
-
-      const tableColumn = ["Product", "Qty", "Price", "Total"];
-      const tableRows = order.products?.map((product) => [
-        product.productId || "N/A",
-        product.quantity || 0,
-        `₹${product.price || 0}`,
-        `₹${(product.price || 0) * (product.quantity || 0)}`,
-      ]) || [];
-
-      autoTable(doc, {
-        startY: 130,
-        head: [tableColumn],
-        body: tableRows,
-        styles: { halign: "center" },
-      });
-
-      const finalY = doc.lastAutoTable.finalY || 150;
-      doc.text(`Total Amount: ₹${order.amount || 0}`, 10, finalY + 10);
-      doc.text("Thank you for shopping with us!", 10, finalY + 20);
+      doc.text(`Phone: ${order.phone || "N/A"}`, 10, 115);
+  
+      doc.line(10, 125, 200, 125); // Line before product table
+  
+      // Check if order.products is valid
+      if (!order.products || !Array.isArray(order.products) || order.products.length === 0) {
+        doc.text("No products available in this order.", 10, 140);
+      } else {
+        // Table for Products
+        const tableColumn = ["Product ID", "Qty", "Price", "Total"];
+        const tableRows = order.products.map((product) => [
+          product.productId || "N/A",
+          product.quantity || 0,
+          `₹${product.price?.toFixed(2) || "0.00"}`,
+          `₹${((product.price || 0) * (product.quantity || 0)).toFixed(2)}`,
+        ]);
+  
+        autoTable(doc, {
+          startY: 130,
+          head: [tableColumn],
+          body: tableRows,
+          theme: "grid",
+          styles: { fontSize: 10, halign: "center" },
+          headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] }, // Black header with white text
+        });
+      }
+  
+      // Footer - Total Amount
+      const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 150;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text(`Total Amount: ₹${order.amount?.toFixed(2) || "0.00"}`, 10, finalY);
+  
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "italic");
+      doc.text("Thank you for shopping with us!", 10, finalY + 10);
+  
+      // Save PDF
       doc.save(`Invoice_Order_${order.id}.pdf`);
     } catch (error) {
-      toast.error("Failed to generate invoice");
+      console.error("Failed to generate invoice", error);
+      toast.error("Failed to generate invoice. Please try again.");
     }
   };
+  
+  
 
   return (
     <div className="min-h-screen flex flex-col">
