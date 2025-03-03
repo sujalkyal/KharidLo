@@ -7,7 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation, Pagination } from "swiper/modules";
+import { Autoplay , Navigation, Pagination } from "swiper/modules";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -117,13 +117,26 @@ export default function ProductPage() {
       <div className="flex flex-col md:flex-row bg-white p-10 shadow-xl rounded-3xl">
         {/* Image Section */}
         <div className="w-full md:w-1/2 flex flex-col items-center">
-          <Swiper navigation pagination={{ clickable: true }} modules={[Navigation, Pagination]} className="w-full rounded-xl shadow-lg">
-            {product.image.map((img, index) => (
+          <Swiper
+            navigation
+            pagination={{ clickable: true }}
+            loop={true} // ✅ Enables infinite looping
+            autoplay={{ delay: 3000, disableOnInteraction: false }} // ✅ Changes slide every 1.5 seconds
+            modules={[Autoplay, Navigation, Pagination]}
+            className="w-full rounded-xl shadow-lg"
+          >
+            {(Array.isArray(product.image) ? product.image : [product.image]).map((img, index) => (
               <SwiperSlide key={index}>
-                <Image src={img} alt={product.name} width={600} height={600} className="rounded-xl object-cover" />
+                <Image
+                  src={img}
+                  alt={product.name}
+                  width={600}
+                  height={600}
+                  className="rounded-xl object-cover"
+                />
               </SwiperSlide>
             ))}
-          </Swiper>
+          </Swiper>;
         </div>
         {/* Product Info Section */}
         <div className="w-full md:w-1/2 flex flex-col justify-between px-10">

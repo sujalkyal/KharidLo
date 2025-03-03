@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const slides = [
   {
     image: "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
     title: "iPhone 14 Series",
-    subtitle: "Up to 10% off Voucher",
+    subtitle: "Up to 25% off Voucher",
     buttonText: "Shop Now",
   },
   {
@@ -25,6 +25,15 @@ const slides = [
 export default function Carousel() {
   const [current, setCurrent] = useState(0);
 
+  // Autoplay effect (changes image every 3 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 3000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
   const prevSlide = () => {
     setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
@@ -42,7 +51,9 @@ export default function Carousel() {
             <div className="absolute top-1/4 left-10">
               <h2 className="text-lg font-semibold">{slide.title}</h2>
               <p className="text-4xl font-bold mt-2">{slide.subtitle}</p>
-              <button className="mt-4 px-6 py-2 bg-white text-black rounded-md hover:bg-gray-300">{slide.buttonText}</button>
+              <button className="mt-4 px-6 py-2 bg-white text-black rounded-md hover:bg-gray-300">
+                {slide.buttonText}
+              </button>
             </div>
           </div>
         ))}

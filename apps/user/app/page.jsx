@@ -127,7 +127,7 @@ export default function Header() {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {allProducts.map((product) => (
+            {allProducts.slice(0,5).map((product) => (
               <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
             ))}
           </div>
