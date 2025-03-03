@@ -156,7 +156,7 @@ export default function ProductPage() {
                 <tr key={product.id} className="border-b hover:bg-gray-100 transition-all">
                   <td className="w-1/5 p-3">
                     <img
-                      src={product.image || "/placeholder.jpg"}
+                      src={product.image[0] || "/placeholder.jpg"}
                       alt={product.name}
                       className="w-10 h-10 object-cover rounded-md"
                     />
