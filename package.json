@@ -9,12 +9,9 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "@types/node": "^22.13.8",
-    "@types/react": "^19.0.10",
     "daisyui": "^4.12.24",
     "prettier": "^3.5.0",
-    "turbo": "^2.4.2",
-    "typescript": "5.7.3"
+    "turbo": "^2.4.2"
   },
   "engines": {
     "node": ">=18"
@@ -33,7 +30,6 @@
     "prisma": "^6.4.1",
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.1",
-    "recoil": "^0.7.7",
     "swiper": "^11.2.4"
   }
 }
