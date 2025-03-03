@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   const handleRemoveFromWishlist = async (productId) => {
     try {
@@ -23,6 +24,8 @@ const Wishlist = () => {
         setWishlist(response.data);
       } catch (error) {
         console.error("Error fetching wishlist:", error);
+      } finally {
+        setLoading(false); // Ensure loading state is updated
       }
     };
     fetchWishlist();
@@ -32,13 +35,9 @@ const Wishlist = () => {
     if (wishlist.length === 0) return;
 
     try {
-      // Send all wishlist items to cart in one request
       const productIds = wishlist.map((product) => product.id);
       await axios.post("http://localhost:3000/api/user/addMultipleToCart", { productIds });
-
-      // Clear wishlist after successful addition
       await axios.delete("http://localhost:3000/api/user/wishlist/clearAll");
-
       setWishlist([]);
     } catch (error) {
       console.error("Error moving wishlist items to cart:", error);
@@ -50,14 +49,20 @@ const Wishlist = () => {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Wishlist</h2>
-          <button onClick={handleMoveAllToBag} className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 hover:cursor-pointer">
+          <button
+            onClick={handleMoveAllToBag}
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 hover:cursor-pointer"
+            disabled={loading || wishlist.length === 0}
+          >
             Move All To Bag
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-6">
-          {wishlist.length > 0 ? (
-            wishlist.map((product) => (
+        {loading ? (
+          <p className="text-gray-500">Loading wishlist...</p> // Show loading indicator
+        ) : wishlist.length > 0 ? (
+          <div className="grid grid-cols-4 gap-6">
+            {wishlist.map((product) => (
               <div key={product.id} className="relative">
                 <ProductCard
                   product={product}
@@ -72,11 +77,11 @@ const Wishlist = () => {
                   <Trash2 className="w-5 h-5 text-red-500" />
                 </button>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-500">Your wishlist is empty.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">Your wishlist is empty.</p>
+        )}
       </div>
     </div>
   );

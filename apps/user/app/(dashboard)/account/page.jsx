@@ -89,13 +89,13 @@ export default function ProfilePage() {
             <div className="w-1/4 border-r pr-4">
               <nav className="space-y-3">
                 <Link href="/account/profile">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white">My Profile</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white hover:cursor-pointer">My Profile</button>
                 </Link>
                 <Link href="/account/orders">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Orders</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">My Orders</button>
                 </Link>
                 <Link href="/wishlist">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Wishlist</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">My Wishlist</button>
                 </Link>
               </nav>
             </div>
