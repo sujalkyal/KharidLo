@@ -141,13 +141,14 @@ export default function ProductPage() {
 
         <div className="bg-white shadow-md rounded-lg">
           <table className="w-full table-fixed text-left border-collapse">
-            <thead>
+          <thead>
               <tr className="bg-gray-100 text-gray-600 text-sm">
-                <th className="w-1/5 p-3 font-medium">Image</th>
-                <th className="w-1/5 p-3 font-medium">Name</th>
-                <th className="w-1/5 p-3 font-medium">Price</th>
-                <th className="w-1/5 p-3 font-medium">Orders</th>
-                <th className="w-1/5 p-3 font-medium text-right">Actions</th>
+                <th className="w-1/6 p-3 font-medium">Image</th>
+                <th className="w-1/6 p-3 font-medium">Name</th>
+                <th className="w-1/6 p-3 font-medium">Price</th>
+                <th className="w-1/6 p-3 font-medium">Stock</th>
+                <th className="w-1/6 p-3 font-medium">Orders</th>
+                <th className="w-1/6 p-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
 
@@ -156,15 +157,18 @@ export default function ProductPage() {
                 <tr key={product.id} className="border-b hover:bg-gray-100 transition-all">
                   <td className="w-1/5 p-3">
                     <img
-                      src={product.image || "/placeholder.jpg"}
+                      src={product.image[0] || "/placeholder.jpg"}
                       alt={product.name}
                       className="w-10 h-10 object-cover rounded-md"
                     />
                   </td>
-                  <td className="w-1/5 p-3 font-medium truncate">{product.name}</td>
-                  <td className="w-1/5 p-3">${product.price}</td>
-                  <td className="w-1/5 p-3">{calculateOrdersCount(product.id)}</td>
-                  <td className="w-1/5 p-3 text-right">
+                  <td className="w-1/6 p-3 font-medium truncate">{product.name}</td>
+                  <td className="w-1/6 p-3">${product.price}</td>
+                  <td className="w-1/6 p-3 font-medium" style={{ color: product.stock === 0 ? "red" : "green" }}>
+                    {product.stock === 0 ? "Out of Stock" : product.stock}
+                  </td>
+                  <td className="w-1/6 p-3">{calculateOrdersCount(product.id)}</td>
+                  <td className="w-1/6 p-3 text-right">
                     <button
                       className="text-gray-600 text-lg px-2 py-1 rounded hover:bg-gray-200"
                       onClick={(e) => handleMenuClick(e, product)}
