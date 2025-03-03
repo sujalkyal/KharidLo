@@ -1,27 +1,45 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MoreVertical } from "lucide-react";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUsersAndOrders = async () => {
       try {
-        const res = await fetch("/api/customers/getAllUsers");
-        const data = await res.json();
-        setUsers(data.users || []);
+        // Fetch users
+        const userRes = await fetch("/api/customers/getAllUsers");
+        const userData = await userRes.json();
+        const fetchedUsers = userData.users || [];
+
+        // Fetch orders
+        const orderRes = await fetch("/api/sales/getAllOrders");
+        const orderData = await orderRes.json();
+        const fetchedOrders = orderData.orders || [];
+
+        setUsers(fetchedUsers);
+        setOrders(fetchedOrders);
       } catch (error) {
-        console.error("Failed to fetch users:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchUsersAndOrders();
   }, []);
+
+  // Compute total orders and total value per user
+  const getOrderStats = (userId) => {
+    const userOrders = orders.filter((order) => order.userId === userId);
+    const totalOrders = userOrders.length;
+    const totalValue = userOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
+
+    return { totalOrders, totalValue };
+  };
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-xl">
@@ -40,18 +58,22 @@ const UserTable = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <tr
-                  key={user.id}
-                  className={`border-b hover:bg-gray-50 ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="p-4">{user.email}</td>
-                  <td className="p-4">{user.orders || 0}</td>
-                  <td className="p-4">${user.value || 0}</td>
-                </tr>
-              ))}
+              {users.map((user, index) => {
+                const { totalOrders, totalValue } = getOrderStats(user.id);
+
+                return (
+                  <tr
+                    key={user.id}
+                    className={`border-b hover:bg-gray-50 ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
+                  >
+                    <td className="p-4">{user.email}</td>
+                    <td className="p-4">{totalOrders}</td>
+                    <td className="p-4">${totalValue}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
