@@ -16,60 +16,64 @@ const categories = {
   "Sports & Outdoor": "sports-outdoor",
   "Baby's & Toys": "babys-toys",
   "Groceries & Pets": "groceries-pets",
-  "Health & Beauty": "health-beauty"
+  "Health & Beauty": "health-beauty",
 };
 
 export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (status === "unauthenticated") {
-  //     router.replace("/api/auth/signin");
-  //   }
-  // }, [status, router]);
-
-  // if (status === "loading") {
-  //   return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  // }
-
-
   const [wishlist, setWishlist] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [newlyAddedProducts, setNewlyAddedProducts] = useState([]);
 
+  // Redirect unauthenticated users before rendering UI
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/product/getBestSelling")
-      .then(({ data }) => setBestSellingProducts(data.products))
-      .catch((error) => console.error("Error fetching best selling products:", error));
-  }, []);
+    if (status === "unauthenticated") {
+      router.replace("/api/auth/signin"); // Use replace to prevent back navigation
+    }
+  }, [status, router]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/product/getAllProducts")
-      .then(({ data }) => setAllProducts(data))
-      .catch((error) => console.error("Error fetching all products:", error));
-  }, []);
+    if (status !== "authenticated") return;
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/product/getNewlyAddedProducts")
-      .then(({ data }) => setNewlyAddedProducts(data))
-      .catch((error) => console.error("Error fetching newly added products:", error));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const [bestSelling, allProducts, newlyAdded, wishlist] = await Promise.all([
+          axios.get("/api/product/getBestSelling"),
+          axios.get("/api/product/getAllProducts"),
+          axios.get("/api/product/getNewlyAddedProducts"),
+          axios.get("/api/user/wishlist/getAllItems"),
+        ]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/user/wishlist/getAllItems")
-      .then(({ data }) => setWishlist(data.map((item) => item.id) || []))
-      .catch((error) => console.error("Error fetching wishlist:", error));
-  }, []);
+        setBestSellingProducts(bestSelling.data.products);
+        setAllProducts(allProducts.data);
+        setNewlyAddedProducts(newlyAdded.data);
+        setWishlist(wishlist.data.map((item) => item.id) || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [status]);
 
   const handleCategoryClick = (categoryUrl) => {
-    router.push(`/collection/${encodeURIComponent(categoryUrl)}`); 
+    router.push(`/collection/${encodeURIComponent(categoryUrl)}`);
   };
+
+  // Show loading UI while session is being checked
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-xl font-semibold text-gray-600">Checking session...</p>
+      </div>
+    );
+  }
+
+  // Prevent UI rendering if redirecting to login
+  if (status === "unauthenticated") return null;
 
   return (
     <>
