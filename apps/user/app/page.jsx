@@ -23,17 +23,16 @@ export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/login");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.replace("/api/auth/signin");
+  //   }
+  // }, [status, router]);
 
-  if (status === "loading") {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+  // if (status === "loading") {
+  //   return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  // }
 
-  if (!session) return null;
 
   const [wishlist, setWishlist] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
@@ -125,7 +124,7 @@ export default function Header() {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {allProducts.map((product) => (
+            {allProducts.slice(0,5).map((product) => (
               <ProductCard key={product.id} product={product} wishlist={wishlist} setWishlist={setWishlist} />
             ))}
           </div>

@@ -118,7 +118,7 @@ export default function ProductCard({ product, wishlist = [], setWishlist, updat
 
       <div className="flex items-center gap-2 mt-1">
         <span className="text-red-500 text-lg font-bold">${product?.price || 0}</span>
-        <span className="text-gray-400 line-through">${(product?.price || 0) + 100}</span>
+        <span className="text-gray-400 line-through">${(product?.price*1.50 || 0)}</span>
       </div>
 
       <div className="flex items-center gap-1 mt-1">
