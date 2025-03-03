@@ -10,6 +10,7 @@ import autoTable from "jspdf-autotable";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -18,6 +19,8 @@ export default function OrdersPage() {
         setOrders(response.data);
       } catch (error) {
         toast.error("Failed to load orders");
+      } finally {
+        setLoading(false); // Ensure loading state is updated
       }
     };
     fetchOrders();
@@ -47,7 +50,6 @@ export default function OrdersPage() {
       const tableRows = order.products?.map((product) => [
         product.productId || "N/A",
         product.quantity || 0,
-        //
         `₹${product.price || 0}`,
         `₹${(product.price || 0) * (product.quantity || 0)}`,
       ]) || [];
@@ -78,19 +80,28 @@ export default function OrdersPage() {
             <div className="w-1/4 border-r pr-4">
               <nav className="space-y-3">
                 <Link href="/account">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Profile</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">
+                    My Profile
+                  </button>
                 </Link>
                 <Link href="/account/orders">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white">My Orders</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white hover:cursor-pointer">
+                    My Orders
+                  </button>
                 </Link>
                 <Link href="/wishlist">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Wishlist</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">
+                    My Wishlist
+                  </button>
                 </Link>
               </nav>
             </div>
             <div className="w-3/4 pl-6">
               <h3 className="text-lg font-semibold text-red-500 mb-4">Your Orders</h3>
-              {orders.length === 0 ? (
+
+              {loading ? (
+                <p className="text-gray-500">Loading orders...</p> // Show loading indicator
+              ) : orders.length === 0 ? (
                 <p className="text-gray-500">You have no orders yet.</p>
               ) : (
                 <div className="space-y-6">
@@ -101,7 +112,7 @@ export default function OrdersPage() {
                       <p><strong>Address:</strong> {order.address}, {order.phone}</p>
                       <p><strong>Total Amount:</strong> ₹{order.amount}</p>
                       <p>
-                        <strong>Status:</strong> 
+                        <strong>Status:</strong>
                         <span className={`font-semibold ${order.status === "pending" ? "text-red-500" : "text-green-500"}`}>
                           {order.status}
                         </span>
