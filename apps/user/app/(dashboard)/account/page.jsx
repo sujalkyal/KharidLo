@@ -18,6 +18,7 @@ export default function ProfilePage() {
   });
 
   const [fetchedUser, setFetchedUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -27,6 +28,8 @@ export default function ProfilePage() {
         setUserDetails((prev) => ({ ...prev, ...response.data }));
       } catch (error) {
         toast.error("Failed to load user details");
+      } finally {
+        setLoading(false);
       }
     };
     fetchUserDetails();
@@ -89,69 +92,76 @@ export default function ProfilePage() {
             <div className="w-1/4 border-r pr-4">
               <nav className="space-y-3">
                 <Link href="/account/profile">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white">My Profile</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-red-500 text-white hover:cursor-pointer">My Profile</button>
                 </Link>
                 <Link href="/account/orders">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Orders</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">My Orders</button>
                 </Link>
                 <Link href="/wishlist">
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">My Wishlist</button>
+                  <button className="w-full text-left px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 hover:cursor-pointer">My Wishlist</button>
                 </Link>
               </nav>
             </div>
             <div className="w-3/4 pl-6">
               <h3 className="text-lg font-semibold text-red-500 mb-4">Edit Your Profile</h3>
 
-              {/* Display fetched user details */}
-              {fetchedUser && (
-                <div className="bg-gray-50 border p-4 rounded-lg mb-6">
-                  <h4 className="text-md font-semibold mb-2">Your Profile Information</h4>
-                  <p><strong>First Name:</strong> {fetchedUser.firstName}</p>
-                  <p><strong>Last Name:</strong> {fetchedUser.lastName}</p>
-                  <p><strong>Email:</strong> {fetchedUser.email}</p>
-                  <p><strong>Address:</strong> {fetchedUser.address || "Not provided"}</p>
-                </div>
+              {/* Show loading indicator */}
+              {loading ? (
+                <div className="text-center text-gray-600">Loading user details...</div>
+              ) : (
+                <>
+                  {/* Display fetched user details */}
+                  {fetchedUser && (
+                    <div className="bg-gray-50 border p-4 rounded-lg mb-6">
+                      <h4 className="text-md font-semibold mb-2">Your Profile Information</h4>
+                      <p><strong>First Name:</strong> {fetchedUser.firstName}</p>
+                      <p><strong>Last Name:</strong> {fetchedUser.lastName}</p>
+                      <p><strong>Email:</strong> {fetchedUser.email}</p>
+                      <p><strong>Address:</strong> {fetchedUser.address || "Not provided"}</p>
+                    </div>
+                  )}
+
+                  {/* Form to edit profile */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-medium">First Name</label>
+                        <input type="text" className="w-full p-2 border rounded" value={userDetails.firstName} onChange={handleInputChange("firstName")} />
+                      </div>
+                      <div>
+                        <label className="block font-medium">Last Name</label>
+                        <input type="text" className="w-full p-2 border rounded" value={userDetails.lastName} onChange={handleInputChange("lastName")} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-medium">Email</label>
+                      <input type="email" className="w-full p-2 border rounded" value={userDetails.email} onChange={handleInputChange("email")} />
+                    </div>
+                    <div>
+                      <label className="block font-medium">Address</label>
+                      <input type="text" className="w-full p-2 border rounded" value={userDetails.address} onChange={handleInputChange("address")} />
+                    </div>
+
+                    <h4 className="text-md font-semibold mt-6">Password Changes</h4>
+                    <div>
+                      <label className="block font-medium">Current Password</label>
+                      <input type="password" className="w-full p-2 border rounded" value={userDetails.currentPassword} onChange={handleInputChange("currentPassword")} />
+                    </div>
+                    <div>
+                      <label className="block font-medium">New Password</label>
+                      <input type="password" className="w-full p-2 border rounded" value={userDetails.newPassword} onChange={handleInputChange("newPassword")} />
+                    </div>
+                    <div>
+                      <label className="block font-medium">Confirm New Password</label>
+                      <input type="password" className="w-full p-2 border rounded" value={userDetails.confirmPassword} onChange={handleInputChange("confirmPassword")} />
+                    </div>
+                    <div className="flex justify-between mt-4">
+                      <button type="button" className="text-gray-600" onClick={cancelFunction}>Cancel</button>
+                      <button type="button" className="bg-red-500 text-white px-4 py-2 rounded" onClick={saveFunction}>Save Changes</button>
+                    </div>
+                  </div>
+                </>
               )}
-
-              {/* Form to edit profile */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block font-medium">First Name</label>
-                    <input type="text" className="w-full p-2 border rounded" value={userDetails.firstName} onChange={handleInputChange("firstName")} />
-                  </div>
-                  <div>
-                    <label className="block font-medium">Last Name</label>
-                    <input type="text" className="w-full p-2 border rounded" value={userDetails.lastName} onChange={handleInputChange("lastName")} />
-                  </div>
-                </div>
-                <div>
-                  <label className="block font-medium">Email</label>
-                  <input type="email" className="w-full p-2 border rounded" value={userDetails.email} onChange={handleInputChange("email")} />
-                </div>
-                <div>
-                  <label className="block font-medium">Address</label>
-                  <input type="text" className="w-full p-2 border rounded" value={userDetails.address} onChange={handleInputChange("address")} />
-                </div>
-
-                <h4 className="text-md font-semibold mt-6">Password Changes</h4>
-                <div>
-                  <label className="block font-medium">Current Password</label>
-                  <input type="password" className="w-full p-2 border rounded" value={userDetails.currentPassword} onChange={handleInputChange("currentPassword")} />
-                </div>
-                <div>
-                  <label className="block font-medium">New Password</label>
-                  <input type="password" className="w-full p-2 border rounded" value={userDetails.newPassword} onChange={handleInputChange("newPassword")} />
-                </div>
-                <div>
-                  <label className="block font-medium">Confirm New Password</label>
-                  <input type="password" className="w-full p-2 border rounded" value={userDetails.confirmPassword} onChange={handleInputChange("confirmPassword")} />
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button type="button" className="text-gray-600" onClick={cancelFunction}>Cancel</button>
-                  <button type="button" className="bg-red-500 text-white px-4 py-2 rounded" onClick={saveFunction}>Save Changes</button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
