@@ -3,10 +3,12 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -23,8 +25,8 @@ export default function LoginPage() {
     });
 
     if (response?.ok) {
-        router.push("/");
-      }
+      router.push("/");
+    }
 
     setLoading(false);
 
@@ -40,7 +42,7 @@ export default function LoginPage() {
       {/* Left Side - Image */}
       <div className="w-1/2 bg-gray-100 flex justify-center items-center">
         <Image
-          src="/auth_image.webp" // Replace with your actual image path
+          src="/auth_image.webp"
           alt="Login Illustration"
           width={600}
           height={600}
@@ -64,15 +66,24 @@ export default function LoginPage() {
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             <button
               type="submit"
               className="w-full bg-red-500 text-white p-2 rounded"
