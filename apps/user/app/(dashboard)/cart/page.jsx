@@ -43,9 +43,23 @@ const CartPage = () => {
   };
 
   const handleCheckout = async () => {
-      
-      localStorage.setItem("checkoutProducts", JSON.stringify(cart));
-      router.push("/cart/checkout");
+    // Prepare the cart data by extracting only productId and quantity
+    const filteredCart = cart.map(({ productId, quantity }) => ({ productId, quantity }));
+
+    try {
+        const response = await axios.post("http://localhost:3000/api/user/checkStock", {filteredCart});
+
+        if (response.data.success) {
+            localStorage.setItem("checkoutProducts", JSON.stringify(cart));
+            router.push("/cart/checkout");
+        } else {
+          const outOfStockNames = response.data.outOfStock.map(item => item.name).join(", ");
+          toast.error(`Out of stock: ${outOfStockNames}`);
+        }
+    } catch (error) {
+        console.error("Error during checkout:", error);
+        toast.error("Failed to check stock. Please try again.");
+    }
   };
   
   if (loading) {
