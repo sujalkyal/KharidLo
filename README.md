@@ -1,36 +1,104 @@
-# Turborepo starter
+# Kharidlo E-Commerce Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Kharidlo is a full-featured e-commerce platform built as a monorepo using [Turborepo](https://turbo.build/repo). It includes separate Next.js applications for admin and user interfaces, a shared database package powered by Prisma, and a modular architecture for scalability and maintainability.
 
-## Using this example
+## Project Structure
 
-Run the following command:
-
-```sh
-npx create-turbo@latest
+```
+├── apps/
+│   ├── admin/      # Admin dashboard (Next.js)
+│   └── user/       # User-facing storefront (Next.js)
+├── packages/
+│   └── db/         # Shared Prisma database package
+├── package.json    # Root config, npm workspaces, scripts
+├── turbo.json      # Turborepo configuration
 ```
 
-## What's inside?
+### Apps
+- **admin**: Admin dashboard for managing products, customers, sales, and more. Built with Next.js, includes authentication, analytics, and product management features.
+- **user**: User-facing storefront for browsing products, managing cart, wishlist, checkout, and account. Built with Next.js, includes authentication, product search, reviews, and more.
 
-This Turborepo includes the following packages/apps:
+### Packages
+- **db**: Shared Prisma database schema and client, used by both apps for data access.
 
-### Apps and Packages
+## Key Features
+- Modular monorepo architecture with [Turborepo](https://turbo.build/repo)
+- Next.js apps for admin and user experiences
+- Authentication via [next-auth](https://next-auth.js.org/)
+- Database access via [Prisma](https://www.prisma.io/)
+- Data visualization with [Recharts](https://recharts.org/)
+- PDF generation with [jsPDF](https://github.com/parallax/jsPDF) and [jsPDF-Autotable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+- Toast notifications with [react-toastify](https://fkhadra.github.io/react-toastify/)
+- Carousel and UI enhancements with [Swiper](https://swiperjs.com/) and [DaisyUI](https://daisyui.com/)
+- Shared components and utilities
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Getting Started
 
-### Utilities
+### 1. Install Dependencies
 
-This Turborepo has some additional tools already setup for you:
+```cmd
+npm install
+```
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### 2. Environment Variables
+
+Each app (`admin`, `user`) and the database package may require environment variables for proper operation (e.g., database connection, authentication secrets, API keys). Copy the example file if available, or create a `.env.local` file in each app and fill in the required values:
+
+```
+apps/admin/.env.local
+apps/user/.env.local
+packages/db/.env
+```
+
+Common variables:
+- `DATABASE_URL` (for Prisma)
+- `NEXTAUTH_SECRET`, `NEXTAUTH_URL` (for authentication)
+- Any third-party API keys used in your project
+
+Refer to each app's documentation or code for the exact variables needed.
+
+### 3. Database Setup
+
+Prisma migrations and schema are managed in `packages/db/prisma`. To set up the database:
+
+```cmd
+npx prisma migrate dev --schema=packages/db/prisma/schema.prisma
+```
+
+### 4. Running the Apps
+
+Start all apps and packages in development mode:
+
+```cmd
+npm run dev
+```
+
+Or run a specific app:
+
+```cmd
+cd apps/admin
+npm run dev
+
+cd apps/user
+npm run dev
+```
+
+### 5. Build for Production
+
+Build all apps and packages:
+
+```cmd
+npm run build
+```
+
+---
+This project is maintained by the Kharidlo team.
+
+## Useful Links
+
+- [Next.js Docs](https://nextjs.org/docs)
+- [Prisma Docs](https://www.prisma.io/docs)
 
 ### Build
 
@@ -38,7 +106,7 @@ To build all apps and packages, run the following command:
 
 ```
 cd my-turborepo
-pnpm build
+npm build
 ```
 
 ### Develop
@@ -47,7 +115,7 @@ To develop all apps and packages, run the following command:
 
 ```
 cd my-turborepo
-pnpm dev
+npm dev
 ```
 
 ### Remote Caching
