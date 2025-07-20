@@ -41,22 +41,35 @@ Kharidlo is a full-featured e-commerce platform built as a monorepo using [Turbo
 npm install
 ```
 
+
 ### 2. Environment Variables
 
-Each app (`admin`, `user`) and the database package may require environment variables for proper operation (e.g., database connection, authentication secrets, API keys). Copy the example file if available, or create a `.env.local` file in each app and fill in the required values:
+Each app and the database package require environment variables for proper operation (database connection, authentication secrets, API keys, etc.). Example files are provided:
 
-```
-apps/admin/.env.local
-apps/user/.env.local
-packages/db/.env
-```
+- Root: `.env.example` (contains variables for Google OAuth, Prisma, JWT, NextAuth)
+- Database: `packages/db/.env.example` (contains `DATABASE_URL`)
 
-Common variables:
-- `DATABASE_URL` (for Prisma)
-- `NEXTAUTH_SECRET`, `NEXTAUTH_URL` (for authentication)
-- Any third-party API keys used in your project
+**Setup Instructions:**
 
-Refer to each app's documentation or code for the exact variables needed.
+1. Copy the example files to actual environment files:
+   - At the root:
+     ```cmd
+     copy .env.example .env.local
+     ```
+   - For the database package:
+     ```cmd
+     copy packages\db\.env.example packages\db\.env
+     ```
+2. Open each `.env.local` and `.env` file and fill in your real credentials and secrets.
+   - For example, set your Google OAuth client ID/secret, database connection string, JWT secret, NextAuth secret, etc.
+
+**Required variables include:**
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (Google OAuth)
+- `DATABASE_URL` (Prisma database connection)
+- `JWT_SECRET` (JWT authentication)
+- `NEXTAUTH_SECRET` (NextAuth authentication)
+
+Refer to the `.env.example` files for the full list and descriptions. You may need to add more variables depending on your deployment or third-party integrations.
 
 ### 3. Database Setup
 
